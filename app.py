@@ -23,7 +23,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "advance_register.db")
+DB_PATH = os.environ.get(
+    "DATABASE_PATH",
+    os.path.join(os.path.dirname(__file__), "advance_register.db"),
+)
 
 app = Flask(__name__)
 # CORS_ORIGINS: comma-separated list of allowed frontend origins in production
