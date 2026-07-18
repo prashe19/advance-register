@@ -1,0 +1,2724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Advance Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   Design tokens — vibrant, fluid "control room" aesthetic
+   ========================================================================== */
+:root{
+  --bg:            #F6F4FE;
+  --surface:       #FFFFFF;
+  --surface-2:     #FBFAFF;
+  --border:        #E8E3F7;
+  --border-soft:   #F1EEFB;
+  --ink:           #1C1830;
+  --ink-soft:      #635C7C;
+  --ink-faint:     #A199BA;
+
+  --primary:       #6D28D9;
+  --primary-2:     #8B5CF6;
+  --primary-dark:  #4C1D95;
+  --pink:          #DB2777;
+  --teal:          #0D9488;
+  --amber:         #D97706;
+  --rose:          #E11D48;
+  --blue:          #2563EB;
+  --green:         #059669;
+
+  --primary-tint:  #F1EAFE;
+  --teal-tint:     #DCFAF4;
+  --amber-tint:    #FEF3DC;
+  --rose-tint:     #FDE4EA;
+  --blue-tint:     #E3ECFE;
+  --green-tint:    #DEFBEE;
+  --slate-tint:    #ECEAF6;
+
+  --grad-primary:  linear-gradient(135deg, #6D28D9 0%, #C026D3 55%, #DB2777 100%);
+  --grad-teal:     linear-gradient(135deg, #0D9488 0%, #10B981 100%);
+  --grad-amber:    linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+  --grad-rose:     linear-gradient(135deg, #E11D48 0%, #FB7185 100%);
+  --grad-blue:     linear-gradient(135deg, #2563EB 0%, #60A5FA 100%);
+
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body:    'Inter', -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Courier New', monospace;
+
+  --radius-sm: 9px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 2px rgba(28,24,48,0.06), 0 1px 1px rgba(28,24,48,0.04);
+  --shadow-md: 0 8px 24px rgba(76,29,149,0.10), 0 2px 8px rgba(76,29,149,0.06);
+  --shadow-lg: 0 24px 64px rgba(28,24,48,0.22);
+  --ease: cubic-bezier(.2,.7,.3,1);
+}
+
+*, *::before, *::after{ box-sizing: border-box; }
+html, body{ height: 100%; }
+body{
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+h1,h2,h3,h4{ font-family: var(--font-display); font-weight: 600; margin: 0; color: var(--ink); letter-spacing: -0.01em; }
+button{ font-family: inherit; }
+input, select, textarea{ font-family: inherit; }
+a{ color: inherit; }
+::selection{ background: var(--primary-tint); }
+:focus-visible{ outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+
+.mono{ font-family: var(--font-mono); }
+.hidden{ display: none !important; }
+.visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+@keyframes fade-up{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
+@keyframes fade-in{ from{ opacity:0;} to{ opacity:1;} }
+@keyframes pop-in{ from{ opacity:0; transform: scale(.96);} to{ opacity:1; transform: scale(1);} }
+@keyframes shimmer{ from{ background-position: -300px 0; } to{ background-position: 300px 0; } }
+@keyframes spin{ to{ transform: rotate(360deg); } }
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+.btn{
+  display: inline-flex; align-items: center; gap: 6px;
+  border: none;
+  background: var(--grad-primary);
+  color: #fff;
+  font-size: 13.5px; font-weight: 600;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: transform 140ms var(--ease), box-shadow 140ms var(--ease), filter 140ms var(--ease), opacity 140ms;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(109,40,217,0.28);
+}
+.btn:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px rgba(109,40,217,0.36); filter: brightness(1.04); }
+.btn:active{ transform: translateY(0); box-shadow: 0 2px 6px rgba(109,40,217,0.3); }
+.btn:disabled{ opacity: 0.5; cursor: not-allowed; transform:none; box-shadow:none; }
+.btn-ghost{
+  background: var(--surface); color: var(--primary-dark); border: 1.5px solid var(--border);
+  box-shadow: none;
+}
+.btn-ghost:hover{ background: var(--primary-tint); border-color: var(--primary-2); box-shadow: none; }
+.btn-sm{ padding: 6px 11px; font-size: 12px; border-radius: 8px; }
+.btn-danger{ background: var(--grad-rose); box-shadow: 0 2px 10px rgba(225,29,72,0.28); }
+.btn-danger:hover{ box-shadow: 0 6px 18px rgba(225,29,72,0.36); }
+.btn-danger-ghost{ background: var(--surface); color: var(--rose); border: 1.5px solid var(--rose-tint); box-shadow:none; }
+.btn-danger-ghost:hover{ background: var(--rose-tint); }
+.btn-teal{ background: var(--grad-teal); box-shadow: 0 2px 10px rgba(13,148,136,0.28); }
+.btn-block{ width: 100%; justify-content: center; }
+.btn-row{ display:flex; gap: 7px; flex-wrap: wrap; }
+.btn-icon{ width:34px; height:34px; padding:0; justify-content:center; }
+
+/* ==========================================================================
+   Login screen
+   ========================================================================== */
+#login-screen{
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(1100px 700px at 12% -8%, rgba(219,39,119,0.16), transparent 60%),
+    radial-gradient(1000px 640px at 100% 100%, rgba(109,40,217,0.18), transparent 55%),
+    var(--bg);
+  position: relative; overflow: hidden;
+}
+#login-screen::before{
+  content:""; position:absolute; inset:-20%;
+  background: radial-gradient(700px 500px at 50% 30%, rgba(139,92,246,0.10), transparent 60%);
+  animation: drift 16s ease-in-out infinite alternate;
+}
+@keyframes drift{ from{ transform: translate(0,0);} to{ transform: translate(-3%, 3%);} }
+.login-card{
+  width: 100%; max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 38px 34px 30px;
+  position: relative;
+  animation: fade-up 420ms var(--ease);
+  z-index: 1;
+}
+.login-badge{
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--grad-primary);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-family: var(--font-display); font-weight:700; font-size:17px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 18px rgba(109,40,217,0.35);
+}
+.login-eyebrow{
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--primary); font-weight:600; margin-bottom: 6px;
+}
+.login-title{ font-size: 27px; margin-bottom: 4px; }
+.login-sub{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 26px; line-height:1.5; }
+.field{ margin-bottom: 16px; }
+.field label{
+  display: block; font-size: 11.5px; font-weight: 700; color: var(--ink-soft);
+  margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.field input, .field select, .field textarea{
+  width: 100%;
+  border: 1.5px solid var(--border);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--ink);
+  transition: border-color 140ms, box-shadow 140ms, background 140ms;
+}
+.field input:hover, .field select:hover, .field textarea:hover{ border-color: var(--primary-2); }
+.field input:focus, .field select:focus, .field textarea:focus{
+  border-color: var(--primary); background: var(--surface);
+  box-shadow: 0 0 0 4px var(--primary-tint); outline: none;
+}
+.field-hint{ font-size: 11.5px; color: var(--ink-faint); margin-top: 5px; line-height:1.5; }
+.field-error{ font-size: 12px; color: var(--rose); margin-top: 4px; }
+.form-error-banner{
+  background: var(--rose-tint); color: #9F1239;
+  border: 1px solid rgba(225,29,72,0.18);
+  border-radius: var(--radius-sm);
+  padding: 11px 13px; font-size: 13px; margin-bottom: 16px;
+  line-height: 1.45; animation: pop-in 160ms var(--ease);
+}
+.form-success-banner{
+  background: var(--green-tint); color: #065F46;
+  border: 1px solid rgba(5,150,105,0.18);
+  border-radius: var(--radius-sm);
+  padding: 11px 13px; font-size: 13px; margin-bottom: 16px;
+  line-height: 1.45; animation: pop-in 160ms var(--ease);
+}
+.login-footlink{ margin-top: 14px; font-size: 12.5px; text-align: center; }
+.login-footlink button{
+  background: none; border: none; color: var(--primary); text-decoration: underline;
+  cursor: pointer; font-size: inherit; padding: 2px; font-weight:600;
+}
+
+/* ==========================================================================
+   App shell / header / tabs
+   ========================================================================== */
+#app{ min-height: 100vh; display: flex; flex-direction: column; }
+.app-header{
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 30px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 40;
+}
+.brand{ display:flex; align-items: center; gap: 12px; }
+.brand-mark{
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--grad-primary); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-display); font-weight:700; font-size: 14px;
+  box-shadow: 0 4px 14px rgba(109,40,217,0.32);
+}
+.brand h1{ font-size: 18.5px; }
+.brand-sub{ font-size: 11px; color: var(--ink-faint); font-family: var(--font-mono); letter-spacing:0.04em; margin-top:1px; }
+.header-user{ display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-soft); }
+.header-user .who{ font-family: var(--font-mono); color: var(--ink); font-weight:600; }
+.user-chip{ display:flex; align-items:center; gap:8px; padding: 6px 12px 6px 6px; background: var(--surface-2); border:1px solid var(--border); border-radius: 999px; margin-right: 6px;}
+.user-avatar{
+  width:24px; height:24px; border-radius:50%; background: var(--grad-blue); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700;
+}
+.header-user button{
+  background: none; border: 1.5px solid var(--border); color: var(--ink-soft);
+  border-radius: var(--radius-sm); padding: 7px 13px; cursor: pointer; font-size: 12.5px;
+  transition: all 140ms var(--ease); font-weight: 600;
+}
+.header-user button:hover{ border-color: var(--primary-2); color: var(--primary); background: var(--primary-tint); }
+
+.tab-nav{
+  display:flex; gap: 4px; padding: 0 30px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.tab-btn{
+  position: relative;
+  background:none; border:none; cursor:pointer;
+  padding: 13px 6px; margin-right: 22px;
+  font-size: 13.5px; font-weight: 600; color: var(--ink-faint);
+  transition: color 160ms var(--ease);
+  display:flex; align-items:center; gap:7px;
+}
+.tab-btn svg{ width:16px; height:16px; opacity:.75; }
+.tab-btn:hover{ color: var(--ink-soft); }
+.tab-btn.active{ color: var(--primary-dark); }
+.tab-btn.active svg{ opacity:1; }
+.tab-indicator{
+  position:absolute; bottom:-1px; left:0; height:2.5px; width:0;
+  background: var(--grad-primary); border-radius: 3px 3px 0 0;
+  transition: transform 260ms var(--ease), width 260ms var(--ease);
+}
+
+.content{ padding: 24px 30px 60px; flex: 1; max-width: 1360px; width:100%; margin: 0 auto; }
+
+/* ==========================================================================
+   Dashboard
+   ========================================================================== */
+.dash-hero{
+  border-radius: var(--radius-lg);
+  background: var(--grad-primary);
+  padding: 30px 32px;
+  color: #fff;
+  position: relative; overflow:hidden;
+  margin-bottom: 24px;
+  animation: fade-up 400ms var(--ease);
+}
+.dash-hero::before{
+  content:""; position:absolute; inset:0;
+  background: radial-gradient(420px 260px at 90% -10%, rgba(255,255,255,0.28), transparent 60%),
+              radial-gradient(360px 260px at 10% 120%, rgba(255,255,255,0.14), transparent 60%);
+}
+.dash-hero-top{ position:relative; display:flex; align-items:flex-start; justify-content:space-between; gap: 20px; flex-wrap:wrap;}
+.dash-hero-eyebrow{ font-family: var(--font-mono); font-size:11.5px; letter-spacing:0.12em; text-transform:uppercase; opacity:.85; }
+.dash-hero-title{ font-size: 26px; color:#fff; margin-top:4px; }
+.dash-hero-sub{ font-size: 13.5px; opacity:.9; margin-top:6px; max-width: 480px; line-height:1.5;}
+.dash-hero-cta{ display:flex; gap:10px; flex-wrap:wrap; }
+.dash-hero-cta .btn-ghost{ background: rgba(255,255,255,0.14); color:#fff; border-color: rgba(255,255,255,0.35); backdrop-filter: blur(4px); }
+.dash-hero-cta .btn-ghost:hover{ background: rgba(255,255,255,0.24); }
+.dash-hero-cta .btn{ background:#fff; color: var(--primary-dark); box-shadow: 0 6px 20px rgba(0,0,0,0.18); }
+.dash-hero-cta .btn:hover{ filter:none; background:#fff; }
+
+.stat-grid{
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  margin-top: 22px; position: relative;
+}
+@media (max-width: 980px){ .stat-grid{ grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 560px){ .stat-grid{ grid-template-columns: 1fr; } }
+.stat-card{
+  background: rgba(255,255,255,0.96);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  color: var(--ink);
+  box-shadow: 0 10px 30px rgba(20,10,50,0.18);
+  animation: fade-up 460ms var(--ease) backwards;
+}
+.stat-card:nth-child(1){ animation-delay: 40ms; }
+.stat-card:nth-child(2){ animation-delay: 100ms; }
+.stat-card:nth-child(3){ animation-delay: 160ms; }
+.stat-card:nth-child(4){ animation-delay: 220ms; }
+.stat-icon{
+  width: 34px; height:34px; border-radius: 10px; display:flex; align-items:center; justify-content:center;
+  margin-bottom: 10px;
+}
+.stat-icon svg{ width:18px; height:18px; }
+.stat-label{ font-size: 11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color: var(--ink-faint); }
+.stat-value{ font-family: var(--font-display); font-size: 25px; font-weight:700; margin-top: 3px; }
+.stat-foot{ font-size: 11.5px; color: var(--ink-soft); margin-top: 4px; }
+
+.dash-grid{
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; margin-top: 20px;
+  align-items: start;
+}
+@media (max-width: 980px){ .dash-grid{ grid-template-columns: 1fr; } }
+
+.panel{
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); overflow:hidden;
+  animation: fade-up 420ms var(--ease) backwards; animation-delay: 120ms;
+}
+.panel-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 18px 20px 4px;
+}
+.panel-head h3{ font-size: 15.5px; }
+.panel-head-sub{ font-size:11.5px; color: var(--ink-faint); margin-top:2px; }
+.panel-body{ padding: 14px 20px 20px; }
+
+.bar-row{ display:grid; grid-template-columns: 84px 1fr 64px; align-items:center; gap: 10px; margin-bottom: 11px; }
+.bar-row:last-child{ margin-bottom:0; }
+.bar-label{ font-size:12px; font-weight:700; color: var(--ink-soft); font-family: var(--font-mono); }
+.bar-track{ height: 9px; border-radius:5px; background: var(--slate-tint); overflow:hidden; }
+.bar-fill{ height:100%; border-radius:5px; background: var(--grad-primary); width:0; transition: width 700ms var(--ease); }
+.bar-value{ font-size: 12px; font-weight:700; text-align:right; color: var(--ink); font-family: var(--font-mono); }
+
+.overdue-item{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding: 11px 0; border-bottom: 1px solid var(--border-soft);
+}
+.overdue-item:last-child{ border-bottom:none; }
+.overdue-name{ font-weight:700; font-size:13px; }
+.overdue-sub{ font-size:11.5px; color:var(--ink-faint); margin-top:2px; }
+.overdue-days{
+  font-family: var(--font-mono); font-size:11.5px; font-weight:700; color:#fff;
+  background: var(--grad-rose); padding:4px 9px; border-radius:999px; white-space:nowrap;
+}
+.dash-empty{ text-align:center; color: var(--ink-faint); font-size:13px; padding: 26px 10px; }
+
+/* ---- Dashboard filter bar + refresh -------------------------------- */
+.dash-filterbar{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  margin: 16px 0 2px;
+}
+.dash-filterbar select{
+  border:1px solid var(--border); background:#fff; border-radius: var(--radius-sm);
+  padding:7px 10px; font-size:12.5px; color: var(--ink); font-weight:600;
+}
+.refresh-btn{
+  display:inline-flex; align-items:center; gap:7px;
+  border:1px solid var(--border); background:#fff; color: var(--ink-soft);
+  border-radius: var(--radius-sm); padding:7px 12px; font-size:12.5px; font-weight:600;
+  cursor:pointer; margin-left:auto; transition: border-color 150ms var(--ease), color 150ms var(--ease);
+}
+.refresh-btn:hover{ border-color: var(--primary); color: var(--primary); }
+.refresh-btn svg{ width:14px; height:14px; transition: transform 500ms var(--ease); }
+.refresh-btn.spinning svg{ animation: spin-360 700ms linear infinite; }
+@keyframes spin-360{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+
+/* ---- Clickable stat cards / bars ------------------------------------ */
+.stat-card.clickable{ cursor:pointer; }
+.stat-card.clickable:hover{ transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary-2); }
+.bar-row.clickable{ cursor:pointer; border-radius: 8px; padding: 4px 6px; margin: -4px -6px 7px; transition: background 150ms var(--ease); }
+.bar-row.clickable:hover{ background: var(--primary-tint); }
+.bar-row.clickable:hover .bar-label{ color: var(--primary-dark); }
+
+/* ---- Cross-fade for dashboard sections ------------------------------ */
+.fade-in{ animation: fade-in-up 360ms var(--ease) both; }
+@keyframes fade-in-up{ from{ opacity:0; transform: translateY(6px);} to{ opacity:1; transform:translateY(0);} }
+
+/* ---- Status donut ----------------------------------------------------*/
+.donut-wrap{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:center; }
+.donut-svg{ flex-shrink:0; }
+.donut-svg circle{ transition: stroke-dasharray 700ms var(--ease); cursor: default; }
+.donut-center-value{ font-family: var(--font-display); font-size:20px; font-weight:700; fill: var(--ink); }
+.donut-center-label{ font-family: var(--font-body); font-size:9.5px; fill: var(--ink-faint); text-transform:uppercase; letter-spacing:0.05em; }
+.donut-legend{ display:flex; flex-direction:column; gap:8px; min-width:150px; }
+.donut-legend-item{ display:flex; align-items:center; gap:8px; font-size:12px; }
+.donut-legend-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.donut-legend-label{ color: var(--ink-soft); font-weight:600; flex:1; }
+.donut-legend-value{ font-family: var(--font-mono); font-weight:700; color: var(--ink); }
+
+/* ---- Trend strip -------------------------------------------------- */
+.trend-svg{ width:100%; height:auto; display:block; }
+.trend-area{ fill: url(#trendGradient); opacity:0.9; }
+.trend-line{ fill:none; stroke: var(--primary); stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
+.trend-dot{ fill:#fff; stroke: var(--primary); stroke-width:2.5; cursor: default; }
+.trend-dot:hover{ stroke: var(--pink); }
+.trend-labels{ display:flex; justify-content:space-between; margin-top:6px; padding: 0 2px; }
+.trend-labels span{ font-size:10px; color: var(--ink-faint); font-family: var(--font-mono); }
+
+/* ---- Recent activity feed ------------------------------------------ */
+.activity-feed{ list-style:none; margin:0; padding:0; }
+.activity-item{
+  display:flex; align-items:flex-start; gap:10px;
+  padding:10px 4px; border-bottom:1px solid var(--border-soft);
+  cursor:pointer; border-radius:8px; transition: background 150ms var(--ease);
+}
+.activity-item:hover{ background: var(--primary-tint); }
+.activity-item:last-child{ border-bottom:none; }
+.activity-dot{
+  width:26px; height:26px; border-radius:50%; flex-shrink:0; margin-top:1px;
+  display:flex; align-items:center; justify-content:center; color:#fff;
+}
+.activity-dot svg{ width:13px; height:13px; }
+.activity-text{ font-size:12.5px; color: var(--ink); line-height:1.4; }
+.activity-text b{ font-weight:700; }
+.activity-time{ font-size:10.5px; color: var(--ink-faint); margin-top:2px; font-family: var(--font-mono); }
+
+
+/* ==========================================================================
+   Toolbar
+   ========================================================================== */
+.toolbar{
+  display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 18px;
+  background: var(--surface); border:1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px 18px; box-shadow: var(--shadow-sm);
+  animation: fade-up 380ms var(--ease);
+}
+.toolbar-group{ display: flex; flex-direction: column; gap: 5px; }
+.toolbar-group label{
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.toolbar input[type="search"], .toolbar select{
+  border: 1.5px solid var(--border); background: var(--surface-2); border-radius: var(--radius-sm);
+  padding: 8px 11px; font-size: 13px; color: var(--ink); transition: border-color 140ms, box-shadow 140ms;
+}
+.toolbar input[type="search"]{ width: 230px; }
+.toolbar input:focus, .toolbar select:focus{ border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-tint); outline:none; }
+.toolbar-spacer{ flex: 1; }
+.sort-dir-btn{
+  border: 1.5px solid var(--border); background: var(--surface-2); border-radius: var(--radius-sm);
+  padding: 8px 12px; cursor: pointer; font-size: 13px; color: var(--ink-soft); transition: all 140ms var(--ease);
+}
+.sort-dir-btn:hover{ border-color: var(--primary-2); color: var(--primary); }
+
+/* ==========================================================================
+   Ledger cards (table-as-cards)
+   ========================================================================== */
+.ledger-wrap{ display:flex; flex-direction:column; gap: 10px; }
+.ledger-card{
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.1fr 1.4fr auto;
+  align-items: center; gap: 14px; padding: 14px 18px;
+  transition: transform 140ms var(--ease), box-shadow 140ms var(--ease), border-color 140ms;
+  animation: fade-up 320ms var(--ease) backwards;
+}
+.ledger-card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border-soft); }
+.ledger-card.is-overdue{ border-left: 4px solid var(--rose); }
+@media (max-width: 1080px){
+  .ledger-card{ grid-template-columns: 1fr 1fr; grid-template-areas: "person amount" "dept status" "actions actions"; }
+  .lc-voucher{ grid-area: unset; }
+  .lc-person{ grid-area: person; }
+  .lc-dept{ grid-area: dept; }
+  .lc-amount{ grid-area: amount; text-align:right; }
+  .lc-date{ display:none; }
+  .lc-status{ grid-area: status; text-align:right; }
+  .lc-actions{ grid-area: actions; }
+}
+.lc-voucher{ font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); }
+.lc-person .cell-name{ font-weight: 700; font-size:13.5px; }
+.lc-person .cell-sub{ font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+.lc-dept .dept-pill{
+  display:inline-block; font-size:11px; font-weight:700; padding: 3px 9px; border-radius: 999px;
+  background: var(--primary-tint); color: var(--primary-dark);
+}
+.lc-dept .cell-sub{ font-size: 11px; color: var(--ink-faint); margin-top: 3px; }
+.lc-amount{ font-family: var(--font-mono); font-weight: 700; font-size: 14px; white-space:nowrap; }
+.lc-date{ font-size: 12.5px; color: var(--ink-soft); }
+.overdue-flag{
+  display: inline-block; margin-top: 3px;
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--rose); font-weight: 700;
+}
+.lc-status .cell-sub{ font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
+.lc-actions{ text-align: right; white-space: nowrap; }
+.empty-card{
+  text-align: center; color: var(--ink-faint); padding: 50px 20px; font-size: 13.5px;
+  background: var(--surface); border: 1.5px dashed var(--border); border-radius: var(--radius-lg);
+}
+
+/* Skeleton loading */
+.skeleton-row{
+  height: 64px; border-radius: var(--radius-md); margin-bottom: 10px;
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--border-soft) 37%, var(--surface-2) 63%);
+  background-size: 400px 100%;
+  animation: shimmer 1.3s infinite linear;
+}
+
+/* Status badges (gradient pills, not stamps) */
+.stamp{
+  display: inline-flex; align-items:center; gap:5px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 5px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.stamp::before{ content:""; width:6px; height:6px; border-radius:50%; background: currentColor; }
+.stamp.blue{ color: var(--blue); background: var(--blue-tint); }
+.stamp.green{ color: var(--green); background: var(--green-tint); }
+.stamp.amber{ color: var(--amber); background: var(--amber-tint); }
+.stamp.red{ color: var(--rose); background: var(--rose-tint); }
+.stamp.slate{ color: var(--ink-soft); background: var(--slate-tint); }
+.stamp.violet{ color: var(--primary-dark); background: var(--primary-tint); }
+
+.pill{
+  display: inline-block; font-size: 10.5px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px;
+  background: var(--primary-tint); color: var(--primary-dark);
+}
+
+/* ==========================================================================
+   Modals
+   ========================================================================== */
+.modal-overlay{
+  position: fixed; inset: 0; background: rgba(20,14,40,0.46);
+  backdrop-filter: blur(3px);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 5vh 16px; overflow-y: auto; z-index: 100;
+  animation: fade-in 160ms var(--ease);
+}
+.modal-card{
+  width: 100%; max-width: 540px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  animation: modal-in 220ms var(--ease);
+}
+.modal-card.wide{ max-width: 680px; }
+@keyframes modal-in{
+  from{ opacity: 0; transform: translateY(14px) scale(.98); }
+  to{ opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-head{
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 22px 24px 14px; border-bottom: 1px solid var(--border-soft);
+}
+.modal-head h2{ font-size: 19px; }
+.modal-head .modal-eyebrow{
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--primary); font-weight:700; margin-bottom: 4px;
+}
+.modal-close{
+  background: var(--surface-2); border: 1px solid var(--border); font-size: 17px; line-height: 1; color: var(--ink-faint);
+  cursor: pointer; padding: 5px 9px; border-radius: 8px; transition: all 140ms var(--ease);
+}
+.modal-close:hover{ color: var(--rose); background: var(--rose-tint); border-color: var(--rose-tint); }
+.modal-body{ padding: 20px 24px; max-height: 66vh; overflow-y: auto; }
+.modal-foot{
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 16px 24px; border-top: 1px solid var(--border-soft);
+}
+.form-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; }
+.form-grid .span-2{ grid-column: 1 / -1; }
+@media (max-width: 560px){ .form-grid{ grid-template-columns: 1fr; } }
+
+.calc-box{
+  background: var(--primary-tint); border: 1px solid rgba(109,40,217,0.15);
+  border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px;
+  color: var(--primary-dark); margin-bottom: 14px; line-height: 1.55;
+  animation: pop-in 160ms var(--ease);
+}
+.calc-box strong{ font-family: var(--font-mono); }
+.calc-box.rose{ background: var(--rose-tint); color: #9F1239; border-color: rgba(225,29,72,0.15); }
+.calc-box.amber{ background: var(--amber-tint); color: #92400E; border-color: rgba(217,119,6,0.15); }
+.calc-box.green{ background: var(--green-tint); color: #065F46; border-color: rgba(5,150,105,0.15); }
+.mismatch-box{
+  background: var(--surface-2); border: 1.5px dashed var(--primary-2);
+  border-radius: var(--radius-sm); padding: 14px; font-size: 13px;
+  color: var(--ink); margin-top: 4px; line-height: 1.55; animation: pop-in 180ms var(--ease);
+}
+.mismatch-box .btn{ margin-top: 10px; }
+
+/* History list */
+.history-list{ list-style: none; margin: 0; padding: 0; }
+.history-item{
+  display: grid; grid-template-columns: 130px 1fr; gap: 4px 14px;
+  padding: 12px 0; border-bottom: 1px solid var(--border-soft);
+  font-size: 12.5px;
+}
+.history-item:last-child{ border-bottom: none; }
+.history-when{ font-family: var(--font-mono); color: var(--ink-faint); font-size: 11px; }
+.history-who{ color: var(--ink-faint); font-size: 11px; margin-top: 2px; }
+.history-what{ color: var(--ink); }
+.history-field{
+  font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase;
+  color: var(--primary); letter-spacing: 0.04em; margin-bottom: 3px; display:block; font-weight:700;
+}
+.history-diff del{ color: var(--rose); background: none; text-decoration: line-through; opacity: 0.8; }
+.history-diff ins{ color: var(--green); background: none; text-decoration: none; font-weight: 600; }
+.history-empty{ text-align: center; color: var(--ink-faint); padding: 30px 0; font-size: 13px; }
+
+/* Segmented toggle (used in settle preview) */
+.segmented{ display:flex; gap:6px; background: var(--surface-2); border:1px solid var(--border); border-radius: 999px; padding:3px; margin-bottom:14px; }
+.segmented button{
+  flex:1; border:none; background:none; padding:7px 10px; border-radius:999px; font-size:12px; font-weight:700;
+  color: var(--ink-faint); cursor:default;
+}
+.segmented button.active{ background: var(--surface); color: var(--primary-dark); box-shadow: var(--shadow-sm); }
+
+/* ==========================================================================
+   Toast
+   ========================================================================== */
+#toast-root{
+  position: fixed; bottom: 22px; right: 22px; z-index: 200;
+  display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+}
+.toast{
+  background: var(--ink); color: #fff;
+  padding: 12px 17px; border-radius: 12px; font-size: 13px; font-weight:500;
+  box-shadow: var(--shadow-lg); max-width: 340px; line-height: 1.4;
+  animation: toast-in 220ms var(--ease);
+  display:flex; align-items:center; gap:9px;
+}
+.toast::before{ content:""; width:7px; height:7px; border-radius:50%; background:#fff; flex-shrink:0; }
+.toast.error{ background: var(--grad-rose); }
+.toast.success{ background: var(--grad-teal); }
+@keyframes toast-in{ from{ opacity:0; transform: translateY(10px) scale(.96);} to{opacity:1; transform: translateY(0) scale(1);} }
+
+/* Loading spinner */
+.spinner{
+  width:16px; height:16px; border-radius:50%;
+  border: 2px solid rgba(255,255,255,0.4); border-top-color:#fff;
+  animation: spin 700ms linear infinite; display:inline-block;
+}
+
+/* Responsive header */
+@media (max-width: 820px){
+  .app-header{ padding: 12px 16px; }
+  .tab-nav{ padding: 0 16px; }
+  .content{ padding: 16px 16px 40px; }
+  .header-user span, .header-user .user-chip{ display:none; }
+  .dash-hero{ padding: 22px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ======================= LOGIN SCREEN ======================= -->
+<div id="login-screen"></div>
+
+<!-- ======================= APP SHELL ======================= -->
+<div id="app" class="hidden"></div>
+
+<!-- ======================= MODAL ROOT ======================= -->
+<div id="modal-root"></div>
+
+<!-- ======================= TOAST ======================= -->
+<div id="toast-root" aria-live="polite"></div>
+
+<script>
+/* ==========================================================================
+   Advance Register — application script
+   ========================================================================== */
+
+const DEFAULT_API_BASE = "http://localhost:5000";
+
+const state = {
+  apiBase: localStorage.getItem("ar_api_base") || DEFAULT_API_BASE,
+  token: localStorage.getItem("ar_token") || null,
+  user: null, // { username, role }
+  departments: [], // [{code,name}]
+  advances: [],
+  filters: { department: "", query: "", status: "", sort_by: "date", sort_dir: "desc" },
+  searchDebounce: null,
+  activeTab: "dashboard",
+};
+
+/* ---- API helper ---------------------------------------------------------*/
+async function api(path, { method = "GET", body, form } = {}) {
+  const headers = {};
+  if (state.token) headers["Authorization"] = "Bearer " + state.token;
+  let fetchBody;
+  if (form) {
+    fetchBody = form;
+  } else if (body !== undefined) {
+    headers["Content-Type"] = "application/json";
+    fetchBody = JSON.stringify(body);
+  }
+  let res;
+  try {
+    res = await fetch(state.apiBase.replace(/\/$/, "") + path, { method, headers, body: fetchBody });
+  } catch (e) {
+    throw { networkError: true, message: "Could not reach the server at " + state.apiBase + ". Check the server address and that the backend is running." };
+  }
+  let data = null;
+  const text = await res.text();
+  if (text) {
+    try { data = JSON.parse(text); } catch (e) { data = null; }
+  }
+  if (res.status === 401) {
+    if (state.token) {
+      state.token = null;
+      localStorage.removeItem("ar_token");
+      renderLogin("Your session expired. Please log in again.");
+    }
+    throw { status: 401, data, message: (data && data.error) || "Please log in to continue." };
+  }
+  if (!res.ok) {
+    throw { status: res.status, data, message: (data && (data.error || data.message)) || `Request failed (${res.status}).` };
+  }
+  return data;
+}
+
+/* ---- Toast ---------------------------------------------------------------*/
+function toast(message, kind = "") {
+  const root = document.getElementById("toast-root");
+  const elx = document.createElement("div");
+  elx.className = "toast" + (kind ? " " + kind : "");
+  elx.textContent = message;
+  root.appendChild(elx);
+  setTimeout(() => {
+    elx.style.transition = "opacity 200ms, transform 200ms";
+    elx.style.opacity = "0"; elx.style.transform = "translateY(6px)";
+    setTimeout(() => elx.remove(), 220);
+  }, 4000);
+}
+
+/* ---- Small helpers ---------------------------------------------------------*/
+function fmtINR(n) {
+  if (n === null || n === undefined || n === "") return "—";
+  const num = Number(n);
+  return "₹" + num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtINRCompact(n) {
+  const num = Number(n || 0);
+  if (num >= 10000000) return "₹" + (num / 10000000).toFixed(2) + "Cr";
+  if (num >= 100000) return "₹" + (num / 100000).toFixed(2) + "L";
+  if (num >= 1000) return "₹" + (num / 1000).toFixed(1) + "k";
+  return "₹" + num.toFixed(0);
+}
+function fmtDate(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso + "T00:00:00");
+  if (isNaN(d)) return iso;
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return `${String(d.getDate()).padStart(2,"0")}-${months[d.getMonth()]}-${d.getFullYear()}`;
+}
+function fmtDateTime(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso.endsWith("Z") ? iso : iso + "Z");
+  if (isNaN(d)) return iso;
+  return fmtDate(d.toISOString().slice(0,10)) + " " + d.toTimeString().slice(0,5);
+}
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function escapeHtml(s){
+  return String(s === null || s === undefined ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+function el(html) {
+  const t = document.createElement("template");
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+}
+function animateCount(node, to, opts = {}) {
+  const isCurrency = !!opts.currency;
+  const dur = 700;
+  const start = performance.now();
+  function step(now) {
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = to * eased;
+    node.textContent = isCurrency ? fmtINRCompact(val) : Math.round(val).toLocaleString("en-IN");
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ==========================================================================
+   LOGIN SCREEN
+   ========================================================================== */
+function renderLogin(noticeMessage) {
+  document.getElementById("app").classList.add("hidden");
+  const root = document.getElementById("login-screen");
+  root.classList.remove("hidden");
+  root.innerHTML = `
+    <div class="login-card" id="login-panel">
+      <div class="login-badge">AR</div>
+      <div class="login-eyebrow">Accounts Office</div>
+      <h1 class="login-title">Advance Register</h1>
+      <div class="login-sub">Sign in to track and settle student conference advances.</div>
+      ${noticeMessage ? `<div class="form-error-banner">${escapeHtml(noticeMessage)}</div>` : ""}
+      <div id="login-error"></div>
+      <form id="login-form">
+        <div class="field">
+          <label for="login-username">Username</label>
+          <input id="login-username" name="username" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+        </div>
+        <button class="btn btn-block" type="submit">Sign in</button>
+      </form>
+      <div class="login-footlink" style="margin-top:10px;">
+        <button type="button" id="show-forgot">Forgot password?</button>
+      </div>
+      <div class="login-footlink">
+        <button type="button" id="show-server-config">Server: <span class="mono">${escapeHtml(state.apiBase)}</span> (change)</button>
+      </div>
+      <div id="server-config" class="hidden" style="margin-top:14px;">
+        <div class="field">
+          <label for="api-base-input">Backend URL</label>
+          <input id="api-base-input" value="${escapeHtml(state.apiBase)}" />
+          <div class="field-hint">The address where your Flask backend is running.</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" type="button" id="save-server-config">Save</button>
+      </div>
+    </div>
+
+    <div class="login-card hidden" id="forgot-request-panel">
+      <div class="login-badge">AR</div>
+      <h1 class="login-title">Reset password</h1>
+      <div class="login-sub">Enter your username. If it has an email on file, we'll send an 8-character reset code (valid 30 minutes).</div>
+      <div id="forgot-request-status"></div>
+      <form id="forgot-request-form">
+        <div class="field">
+          <label for="forgot-username">Username</label>
+          <input id="forgot-username" required />
+        </div>
+        <button class="btn btn-block" type="submit">Send reset code</button>
+      </form>
+      <div class="login-footlink" style="margin-top:10px;">
+        <button type="button" id="have-code-link">I already have a code</button>
+      </div>
+      <div class="login-footlink">
+        <button type="button" id="back-to-login-1">Back to sign in</button>
+      </div>
+    </div>
+
+    <div class="login-card hidden" id="forgot-confirm-panel">
+      <div class="login-badge">AR</div>
+      <h1 class="login-title">Enter reset code</h1>
+      <div class="login-sub">Check your email for the 8-character code.</div>
+      <div id="forgot-confirm-status"></div>
+      <form id="forgot-confirm-form">
+        <div class="field">
+          <label for="confirm-username">Username</label>
+          <input id="confirm-username" required />
+        </div>
+        <div class="field">
+          <label for="confirm-code">Reset code</label>
+          <input id="confirm-code" style="text-transform:uppercase; letter-spacing:0.1em;" required />
+        </div>
+        <div class="field">
+          <label for="confirm-new-password">New password</label>
+          <input id="confirm-new-password" type="password" required />
+        </div>
+        <button class="btn btn-block" type="submit">Reset password</button>
+      </form>
+      <div class="login-footlink" style="margin-top:10px;">
+        <button type="button" id="back-to-login-2">Back to sign in</button>
+      </div>
+    </div>
+  `;
+
+  function showLoginPanel(which) {
+    root.querySelector("#login-panel").classList.toggle("hidden", which !== "login");
+    root.querySelector("#forgot-request-panel").classList.toggle("hidden", which !== "request");
+    root.querySelector("#forgot-confirm-panel").classList.toggle("hidden", which !== "confirm");
+  }
+
+  root.querySelector("#show-forgot").addEventListener("click", () => {
+    root.querySelector("#forgot-username").value = root.querySelector("#login-username").value;
+    showLoginPanel("request");
+  });
+  root.querySelector("#back-to-login-1").addEventListener("click", () => showLoginPanel("login"));
+  root.querySelector("#back-to-login-2").addEventListener("click", () => showLoginPanel("login"));
+  root.querySelector("#have-code-link").addEventListener("click", () => {
+    root.querySelector("#confirm-username").value = root.querySelector("#forgot-username").value;
+    showLoginPanel("confirm");
+  });
+
+  root.querySelector("#forgot-request-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const statusBox = root.querySelector("#forgot-request-status");
+    const username = root.querySelector("#forgot-username").value.trim();
+    statusBox.innerHTML = `<div class="field-hint">Sending…</div>`;
+    try {
+      const data = await api("/api/forgot-password", { method: "POST", body: { username } });
+      statusBox.innerHTML = `<div class="form-success-banner">${escapeHtml(data.message)} Click "I already have a code" once it arrives.</div>`;
+    } catch (err) {
+      statusBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not send reset code.")}</div>`;
+    }
+  });
+
+  root.querySelector("#forgot-confirm-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const statusBox = root.querySelector("#forgot-confirm-status");
+    const username = root.querySelector("#confirm-username").value.trim();
+    const code = root.querySelector("#confirm-code").value.trim();
+    const new_password = root.querySelector("#confirm-new-password").value;
+    statusBox.innerHTML = `<div class="field-hint">Resetting…</div>`;
+    try {
+      await api("/api/reset-password", { method: "POST", body: { username, code, new_password } });
+      statusBox.innerHTML = `<div class="form-success-banner">Password reset! You can sign in now.</div>`;
+      setTimeout(() => {
+        showLoginPanel("login");
+        root.querySelector("#login-username").value = username;
+      }, 1000);
+    } catch (err) {
+      statusBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not reset password.")}</div>`;
+    }
+  });
+
+  root.querySelector("#show-server-config").addEventListener("click", () => {
+    root.querySelector("#server-config").classList.toggle("hidden");
+  });
+  root.querySelector("#save-server-config").addEventListener("click", () => {
+    const val = root.querySelector("#api-base-input").value.trim();
+    if (val) {
+      state.apiBase = val;
+      localStorage.setItem("ar_api_base", val);
+      renderLogin();
+    }
+  });
+
+  root.querySelector("#login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = root.querySelector("#login-username").value.trim();
+    const password = root.querySelector("#login-password").value;
+    const errBox = root.querySelector("#login-error");
+    errBox.innerHTML = "";
+    const submitBtn = e.target.querySelector("button[type=submit]");
+    submitBtn.disabled = true; submitBtn.innerHTML = `<span class="spinner"></span> Signing in…`;
+    try {
+      const data = await api("/api/login", { method: "POST", body: { username, password } });
+      state.token = data.token;
+      state.user = { username: data.username, role: data.role };
+      localStorage.setItem("ar_token", data.token);
+      await bootApp();
+    } catch (err) {
+      errBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Login failed.")}</div>`;
+    } finally {
+      submitBtn.disabled = false; submitBtn.textContent = "Sign in";
+    }
+  });
+}
+
+async function logout() {
+  try { await api("/api/logout", { method: "POST" }); } catch (e) { /* ignore */ }
+  state.token = null; state.user = null;
+  localStorage.removeItem("ar_token");
+  renderLogin();
+}
+
+/* ==========================================================================
+   ICONS (inline, tiny, no external deps)
+   ========================================================================== */
+const ICONS = {
+  dashboard: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>`,
+  ledger: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>`,
+  clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`,
+  alert: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>`,
+  coins: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="9" cy="7" rx="7" ry="4"/><path d="M2 7v6c0 2.2 3.1 4 7 4s7-1.8 7-4V7"/><path d="M16 10.3c2.5.4 6 1.7 6 3.7v0c0 2.2-3.1 4-7 4"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`,
+  report: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>`,
+  download: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>`,
+  refresh: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>`,
+  plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>`,
+  cash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>`,
+  edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
+};
+
+/* ==========================================================================
+   APP SHELL
+   ========================================================================== */
+async function bootApp() {
+  document.getElementById("login-screen").classList.add("hidden");
+  const app = document.getElementById("app");
+  app.classList.remove("hidden");
+  app.innerHTML = `
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark">AR</div>
+        <div>
+          <h1>Advance Register</h1>
+          <div class="brand-sub">STUDENT CONFERENCE ADVANCES</div>
+        </div>
+      </div>
+      <div class="header-user">
+        <div class="user-chip">
+          <div class="user-avatar">${escapeHtml(((state.user && state.user.username) || "?").slice(0,2).toUpperCase())}</div>
+          <span>Signed in as <span class="who">${escapeHtml((state.user && state.user.username) || "")}</span> · ${escapeHtml((state.user && state.user.role) || "")}</span>
+        </div>
+        ${(state.user && state.user.role) === "admin" ? `<button id="manage-users-btn" type="button">Manage users</button>` : ""}
+        <button id="change-password-btn" type="button">Change password</button>
+        <button id="logout-btn" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <nav class="tab-nav" id="tab-nav">
+      <button class="tab-btn" data-tab="dashboard" type="button">${ICONS.dashboard} Dashboard</button>
+      <button class="tab-btn" data-tab="advances" type="button">${ICONS.ledger} Advances</button>
+      <button class="tab-btn" data-tab="reports" type="button">${ICONS.report} Reports</button>
+      <div class="tab-indicator" id="tab-indicator"></div>
+    </nav>
+
+    <div class="content" id="tab-content"></div>
+  `;
+
+  app.querySelector("#logout-btn").addEventListener("click", logout);
+  app.querySelector("#change-password-btn").addEventListener("click", () => openChangePasswordModal());
+  const manageUsersBtn = app.querySelector("#manage-users-btn");
+  if (manageUsersBtn) manageUsersBtn.addEventListener("click", () => openManageUsersModal());
+
+  app.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
+  await loadDepartments();
+  switchTab("dashboard");
+}
+
+function switchTab(tab) {
+  state.activeTab = tab;
+  const nav = document.getElementById("tab-nav");
+  nav.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+  const activeBtn = nav.querySelector(`.tab-btn[data-tab="${tab}"]`);
+  const indicator = document.getElementById("tab-indicator");
+  if (activeBtn && indicator) {
+    indicator.style.width = activeBtn.offsetWidth + "px";
+    indicator.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+  }
+  if (tab === "dashboard") renderDashboard();
+  else if (tab === "reports") renderReportsTab();
+  else renderAdvancesTab();
+}
+window.addEventListener("resize", () => {
+  if (document.getElementById("tab-nav")) switchTab(state.activeTab);
+});
+
+async function loadDepartments() {
+  try {
+    state.departments = await api("/api/departments");
+  } catch (err) {
+    toast(err.message || "Could not load departments.", "error");
+  }
+}
+
+function deptName(code) {
+  const d = state.departments.find(x => x.code === code);
+  return d ? d.name : code;
+}
+
+/* ==========================================================================
+   DASHBOARD
+   ========================================================================== */
+const dashboardState = { fy: "", department: "", rows: [], activity: [] };
+
+async function renderDashboard() {
+  const content = document.getElementById("tab-content");
+  content.innerHTML = `
+    <div class="dash-hero">
+      <div class="dash-hero-top">
+        <div>
+          <div class="dash-hero-eyebrow">Accounts Office · Overview</div>
+          <h2 class="dash-hero-title">Good to see you, ${escapeHtml((state.user && state.user.username) || "")}.</h2>
+          <div class="dash-hero-sub">Here's where every conference advance in the register currently stands.</div>
+        </div>
+        <div class="dash-hero-cta">
+          <button class="btn" id="dash-new-advance" type="button">+ New advance</button>
+          <button class="btn btn-ghost" id="dash-import" type="button">Import Excel</button>
+          <button class="btn btn-ghost" id="dash-remind-all" type="button">Remind all overdue</button>
+        </div>
+      </div>
+      <div class="stat-grid" id="stat-grid">
+        ${skeletonStatCards()}
+      </div>
+    </div>
+
+    <div class="dash-filterbar">
+      <select id="dash-fy" title="Scope the dashboard to a financial year"><option value="">All financial years</option></select>
+      <select id="dash-dept" title="Scope the dashboard to a department"><option value="">All departments</option></select>
+      <button class="refresh-btn" id="dash-refresh" type="button">${ICONS.refresh} Refresh</button>
+    </div>
+
+    <div class="dash-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Outstanding by department</h3>
+            <div class="panel-head-sub">Pending advance amount — click a bar to drill in</div>
+          </div>
+        </div>
+        <div class="panel-body" id="dept-breakdown"><div class="dash-empty">Loading…</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Status distribution</h3>
+            <div class="panel-head-sub">Where every advance in view currently stands</div>
+          </div>
+        </div>
+        <div class="panel-body" id="status-donut"><div class="dash-empty">Loading…</div></div>
+      </div>
+    </div>
+
+    <div class="dash-grid" style="grid-template-columns:1fr;">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Advances given by month</h3>
+            <div class="panel-head-sub">Selected financial year, at a glance</div>
+          </div>
+        </div>
+        <div class="panel-body" id="trend-strip"><div class="dash-empty">Loading…</div></div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Most overdue</h3>
+            <div class="panel-head-sub">Past the settlement deadline</div>
+          </div>
+        </div>
+        <div class="panel-body" id="overdue-list"><div class="dash-empty">Loading…</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Recent activity</h3>
+            <div class="panel-head-sub">Latest events across the whole register</div>
+          </div>
+        </div>
+        <div class="panel-body" id="activity-feed"><div class="dash-empty">Loading…</div></div>
+      </div>
+    </div>
+  `;
+  content.querySelector("#dash-new-advance").addEventListener("click", () => openAdvanceFormModal());
+  content.querySelector("#dash-import").addEventListener("click", () => openImportModal());
+  content.querySelector("#dash-remind-all").addEventListener("click", () => sendBulkReminders());
+  content.querySelector("#dash-refresh").addEventListener("click", () => loadDashboardData(true));
+  content.querySelector("#dash-fy").addEventListener("change", (e) => {
+    dashboardState.fy = e.target.value;
+    renderDashboardSections();
+  });
+  content.querySelector("#dash-dept").addEventListener("change", (e) => {
+    dashboardState.department = e.target.value;
+    renderDashboardSections();
+  });
+
+  await loadDashboardData(false);
+}
+
+async function loadDashboardData(isManualRefresh) {
+  const refreshBtn = document.getElementById("dash-refresh");
+  if (refreshBtn) refreshBtn.classList.add("spinning");
+  const started = Date.now();
+  try {
+    const [rows, activity] = await Promise.all([
+      api("/api/advances"),
+      api("/api/activity?limit=12"),
+    ]);
+    dashboardState.rows = rows;
+    dashboardState.activity = activity;
+    state.advances = rows;
+
+    const fySel = document.getElementById("dash-fy");
+    if (fySel) {
+      const fys = [...new Set(rows.map(r => r.financial_year).filter(Boolean))].sort().reverse();
+      fySel.innerHTML = `<option value="">All financial years</option>` +
+        fys.map(fy => `<option value="${escapeHtml(fy)}">${escapeHtml(fy)}</option>`).join("");
+      fySel.value = dashboardState.fy;
+    }
+    const deptSel = document.getElementById("dash-dept");
+    if (deptSel) {
+      deptSel.innerHTML = `<option value="">All departments</option>` +
+        state.departments.map(d => `<option value="${d.code}">${escapeHtml(d.code)} — ${escapeHtml(d.name)}</option>`).join("");
+      deptSel.value = dashboardState.department;
+    }
+
+    renderDashboardSections();
+    renderActivityFeed();
+  } catch (err) {
+    const grid = document.getElementById("stat-grid");
+    if (grid) grid.innerHTML = `<div class="dash-empty" style="grid-column:1/-1;">${escapeHtml(err.message || "Could not load data.")}</div>`;
+  } finally {
+    if (refreshBtn) {
+      const elapsed = Date.now() - started;
+      const minSpin = isManualRefresh ? 450 : 0; // keep the spin visible even on a fast response
+      setTimeout(() => refreshBtn.classList.remove("spinning"), Math.max(0, minSpin - elapsed));
+    }
+  }
+}
+
+function filteredDashboardRows() {
+  return dashboardState.rows.filter(a =>
+    (!dashboardState.fy || a.financial_year === dashboardState.fy) &&
+    (!dashboardState.department || a.department === dashboardState.department)
+  );
+}
+
+function renderDashboardSections() {
+  const rows = filteredDashboardRows();
+  renderDashboardStats(rows);
+  renderDeptBreakdown(rows);
+  renderStatusDonut(rows);
+  renderTrendStrip(rows);
+  renderOverdueList(rows);
+}
+
+/* Jump from a dashboard element straight into the pre-filtered Advances tab. */
+function jumpToAdvances({ status, department } = {}) {
+  state.filters.status = status || "";
+  state.filters.department = department !== undefined ? department : (dashboardState.department || "");
+  state.filters.query = "";
+  switchTab("advances");
+}
+
+function skeletonStatCards() {
+  return Array(4).fill(0).map(() => `<div class="skeleton-row" style="height:96px;"></div>`).join("");
+}
+
+function renderDashboardStats(rows) {
+  const pending = rows.filter(a => a.status === "pending");
+  const pendingTotal = pending.reduce((s, a) => s + (a.amount || 0), 0);
+  const overdue = pending.filter(a => a.is_overdue);
+  const paymentDue = rows.filter(a => a.status === "closed_payment_due");
+  const refundDue = rows.filter(a => a.status === "closed_refund_due");
+  const paymentDueTotal = paymentDue.reduce((s, a) => s + Math.max(0, (a.amount_spent || 0) - a.amount), 0);
+  const refundDueTotal = refundDue.reduce((s, a) => s + (a.amount_refundable || 0), 0);
+
+  const cards = [
+    {
+      icon: ICONS.coins, grad: "var(--grad-primary)", label: "Outstanding advances",
+      value: fmtINRCompact(pendingTotal), foot: `${pending.length} pending`, status: "pending",
+    },
+    {
+      icon: ICONS.alert, grad: "var(--grad-rose)", label: "Overdue",
+      value: String(overdue.length), foot: overdue.length ? "past settlement deadline" : "nothing overdue", status: "overdue",
+    },
+    {
+      icon: ICONS.clock, grad: "var(--grad-amber)", label: "Payments due to students",
+      value: fmtINRCompact(paymentDueTotal), foot: `${paymentDue.length} awaiting payout`, status: "closed_payment_due",
+    },
+    {
+      icon: ICONS.check, grad: "var(--grad-teal)", label: "Refunds due from students",
+      value: fmtINRCompact(refundDueTotal), foot: `${refundDue.length} awaiting refund`, status: "closed_refund_due",
+    },
+  ];
+
+  const grid = document.getElementById("stat-grid");
+  grid.className = "stat-grid fade-in";
+  grid.innerHTML = cards.map((c, i) => `
+    <div class="stat-card clickable" data-status="${c.status}" title="View these in the Advances tab">
+      <div class="stat-icon" style="background:${c.grad}; color:#fff;">${c.icon}</div>
+      <div class="stat-label">${escapeHtml(c.label)}</div>
+      <div class="stat-value" id="stat-val-${i}">${c.value}</div>
+      <div class="stat-foot">${escapeHtml(c.foot)}</div>
+    </div>
+  `).join("");
+  grid.querySelectorAll(".stat-card[data-status]").forEach(card => {
+    card.addEventListener("click", () => jumpToAdvances({ status: card.dataset.status }));
+  });
+}
+
+function renderDeptBreakdown(rows) {
+  const box = document.getElementById("dept-breakdown");
+  box.classList.add("fade-in");
+  const pending = rows.filter(a => a.status === "pending" && a.department);
+  if (!pending.length) {
+    box.innerHTML = `<div class="dash-empty">No pending advances to break down yet.</div>`;
+    return;
+  }
+  const totals = {};
+  pending.forEach(a => { totals[a.department] = (totals[a.department] || 0) + a.amount; });
+  const counts = {};
+  pending.forEach(a => { counts[a.department] = (counts[a.department] || 0) + 1; });
+  const entries = Object.entries(totals).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const max = Math.max(...entries.map(e => e[1]));
+  box.innerHTML = entries.map(([code, amt]) => `
+    <div class="bar-row clickable" data-dept="${escapeHtml(code)}" title="${counts[code]} pending · ${fmtINR(amt)} — click to view in Advances">
+      <div class="bar-label">${escapeHtml(code)}</div>
+      <div class="bar-track"><div class="bar-fill" data-target="${(amt / max * 100).toFixed(1)}"></div></div>
+      <div class="bar-value">${fmtINRCompact(amt)}</div>
+    </div>
+  `).join("");
+  requestAnimationFrame(() => {
+    box.querySelectorAll(".bar-fill").forEach(bar => {
+      bar.style.width = bar.dataset.target + "%";
+    });
+  });
+  box.querySelectorAll(".bar-row[data-dept]").forEach(row => {
+    row.addEventListener("click", () => jumpToAdvances({ status: "pending", department: row.dataset.dept }));
+  });
+}
+
+/* ---- Status distribution donut ---------------------------------------- */
+const DONUT_BUCKETS = [
+  { key: "pending",     label: "Pending",     color: "var(--primary)", match: a => a.status === "pending" && !a.is_overdue },
+  { key: "overdue",     label: "Overdue",     color: "var(--rose)",    match: a => a.status === "pending" && a.is_overdue },
+  { key: "payment_due", label: "Payment due", color: "var(--amber)",   match: a => a.status === "closed_payment_due" },
+  { key: "refund_due",  label: "Refund due",  color: "var(--blue)",    match: a => a.status === "closed_refund_due" },
+  { key: "settled",     label: "Settled",     color: "var(--teal)",    match: a => ["closed", "payment_made", "refund_received"].includes(a.status) },
+];
+
+function renderStatusDonut(rows) {
+  const box = document.getElementById("status-donut");
+  box.classList.add("fade-in");
+  if (!rows.length) {
+    box.innerHTML = `<div class="dash-empty">No advances in view.</div>`;
+    return;
+  }
+  const buckets = DONUT_BUCKETS.map(b => {
+    const matched = rows.filter(b.match);
+    return { ...b, count: matched.length, amount: matched.reduce((s, a) => s + (a.amount || 0), 0) };
+  }).filter(b => b.count > 0);
+
+  const total = rows.length;
+  const R = 52, C = 2 * Math.PI * R, CX = 70, CY = 70;
+  let offset = 0;
+  const circles = buckets.map(b => {
+    const frac = b.count / total;
+    const dash = frac * C;
+    const circle = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${b.color}" stroke-width="18"
+      stroke-dasharray="${dash.toFixed(2)} ${(C - dash).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}"
+      transform="rotate(-90 ${CX} ${CY})"><title>${escapeHtml(b.label)}: ${b.count} advance${b.count === 1 ? "" : "s"}, ${fmtINR(b.amount)}</title></circle>`;
+    offset += dash;
+    return circle;
+  }).join("");
+
+  box.innerHTML = `
+    <div class="donut-wrap">
+      <svg class="donut-svg" width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="var(--slate-tint)" stroke-width="18"/>
+        ${circles}
+        <text x="${CX}" y="${CY - 3}" text-anchor="middle" class="donut-center-value">${total}</text>
+        <text x="${CX}" y="${CY + 13}" text-anchor="middle" class="donut-center-label">total</text>
+      </svg>
+      <div class="donut-legend">
+        ${buckets.map(b => `
+          <div class="donut-legend-item" title="${fmtINR(b.amount)}">
+            <span class="donut-legend-dot" style="background:${b.color};"></span>
+            <span class="donut-legend-label">${escapeHtml(b.label)}</span>
+            <span class="donut-legend-value">${b.count}</span>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+/* ---- Trend strip: advances given per month, selected FY ---------------- */
+function renderTrendStrip(rows) {
+  const box = document.getElementById("trend-strip");
+  box.classList.add("fade-in");
+
+  // Indian financial year runs Apr -> Mar. Use the dashboard's selected FY,
+  // or fall back to whichever FY is most recent in the current data.
+  const fy = dashboardState.fy || [...new Set(dashboardState.rows.map(r => r.financial_year).filter(Boolean))].sort().reverse()[0];
+  if (!fy) {
+    box.innerHTML = `<div class="dash-empty">No data yet.</div>`;
+    return;
+  }
+  const startYear = parseInt(fy.slice(0, 4), 10);
+  const months = [];
+  for (let i = 0; i < 12; i++) {
+    const m = (3 + i) % 12; // Apr=3 .. next Mar=2
+    const y = m >= 3 ? startYear : startYear + 1;
+    months.push({ y, m, label: MONTH_ABBR[m] });
+  }
+  const inFY = dashboardState.rows.filter(a => a.financial_year === fy);
+  const totals = months.map(({ y, m }) => {
+    const matched = inFY.filter(a => {
+      const d = new Date(a.date_given + "T00:00:00");
+      return d.getFullYear() === y && d.getMonth() === m;
+    });
+    return { count: matched.length, amount: matched.reduce((s, a) => s + (a.amount || 0), 0) };
+  });
+
+  const W = 760, H = 130, PAD = 8;
+  const max = Math.max(1, ...totals.map(t => t.amount));
+  const stepX = (W - PAD * 2) / (totals.length - 1);
+  const points = totals.map((t, i) => {
+    const x = PAD + i * stepX;
+    const y = H - PAD - (t.amount / max) * (H - PAD * 2 - 14);
+    return { x, y, ...t };
+  });
+  const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+  const areaPath = `${linePath} L${points[points.length - 1].x.toFixed(1)},${H - PAD} L${points[0].x.toFixed(1)},${H - PAD} Z`;
+
+  box.innerHTML = `
+    <svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--primary-2)" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="var(--primary-2)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path class="trend-area" d="${areaPath}"/>
+      <path class="trend-line" d="${linePath}"/>
+      ${points.map(p => `<circle class="trend-dot" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4"><title>${p.count} advance${p.count === 1 ? "" : "s"} — ${fmtINR(p.amount)}</title></circle>`).join("")}
+    </svg>
+    <div class="trend-labels">${months.map(m => `<span>${m.label}</span>`).join("")}</div>
+  `;
+}
+const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function renderOverdueList(rows) {
+  const box = document.getElementById("overdue-list");
+  box.classList.add("fade-in");
+  const overdue = rows.filter(a => a.status === "pending" && a.is_overdue)
+    .sort((a, b) => b.days_overdue - a.days_overdue).slice(0, 6);
+  if (!overdue.length) {
+    box.innerHTML = `<div class="dash-empty">Nothing overdue — the register is current.</div>`;
+    return;
+  }
+  box.innerHTML = overdue.map(a => `
+    <div class="overdue-item">
+      <div>
+        <div class="overdue-name">${escapeHtml(a.name)}</div>
+        <div class="overdue-sub">${escapeHtml(a.voucher_no || "")} · ${fmtINR(a.amount)} · ${escapeHtml(deptName(a.department))}</div>
+      </div>
+      <div class="overdue-days">${a.days_overdue}d overdue</div>
+    </div>
+  `).join("");
+}
+
+/* ---- Recent activity feed ---------------------------------------------- */
+const ACTIVITY_META = {
+  created:            { label: "created",             icon: ICONS.plus,   color: "var(--grad-primary)" },
+  status:             { label: "status changed to",   icon: ICONS.cash,   color: "var(--grad-teal)" },
+  amount_spent:       { label: "expenditure recorded", icon: ICONS.cash,  color: "var(--grad-amber)" },
+  amount_refundable:  { label: "refund figure set",    icon: ICONS.cash,  color: "var(--grad-blue)" },
+  amount_paid:        { label: "payment recorded",     icon: ICONS.cash,  color: "var(--grad-teal)" },
+  amount_received:    { label: "refund received",      icon: ICONS.cash,  color: "var(--grad-teal)" },
+};
+function activityMeta(field) {
+  return ACTIVITY_META[field] || { label: field.replace(/_/g, " ") + " updated", icon: ICONS.edit, color: "var(--grad-blue)" };
+}
+
+function renderActivityFeed() {
+  const box = document.getElementById("activity-feed");
+  if (!box) return;
+  box.classList.add("fade-in");
+  const items = dashboardState.activity;
+  if (!items.length) {
+    box.innerHTML = `<div class="dash-empty">No activity recorded yet.</div>`;
+    return;
+  }
+  box.innerHTML = `<ul class="activity-feed">${items.map(it => {
+    const meta = activityMeta(it.field);
+    const who = escapeHtml(it.changed_by || "system");
+    const what = it.field === "created"
+      ? `created advance <b>${escapeHtml(it.advance_voucher_no || "")}</b> for <b>${escapeHtml(it.advance_name || "—")}</b>`
+      : it.field === "status"
+        ? `moved <b>${escapeHtml(it.advance_name || it.advance_voucher_no || "—")}</b> to <b>${escapeHtml(STATUS_META[it.new_value] ? STATUS_META[it.new_value].label : it.new_value)}</b>`
+        : `updated ${meta.label.replace(" recorded", "").replace(" set", "")} on <b>${escapeHtml(it.advance_name || it.advance_voucher_no || "—")}</b>`;
+    return `
+      <li class="activity-item" data-query="${escapeHtml(it.advance_voucher_no || "")}">
+        <div class="activity-dot" style="background:${meta.color};">${meta.icon}</div>
+        <div>
+          <div class="activity-text">${who} ${what}</div>
+          <div class="activity-time">${escapeHtml(fmtRelativeTime(it.changed_at))}</div>
+        </div>
+      </li>
+    `;
+  }).join("")}</ul>`;
+  box.querySelectorAll(".activity-item[data-query]").forEach(item => {
+    item.addEventListener("click", () => {
+      const q = item.dataset.query;
+      if (!q) return;
+      state.filters.status = "";
+      state.filters.department = "";
+      state.filters.query = q;
+      switchTab("advances");
+    });
+  });
+}
+
+function fmtRelativeTime(iso) {
+  if (!iso) return "";
+  const then = new Date(iso.endsWith("Z") ? iso : iso + "Z");
+  if (isNaN(then)) return iso;
+  const diffMs = Date.now() - then.getTime();
+  const mins = Math.round(diffMs / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.round(hrs / 24);
+  if (days < 30) return `${days}d ago`;
+  return then.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+/* ==========================================================================
+   ADVANCES TAB
+   ========================================================================== */
+function renderAdvancesTab() {
+  const content = document.getElementById("tab-content");
+  content.innerHTML = `
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <label for="f-search">Search</label>
+        <input id="f-search" type="search" placeholder="Name, roll no, voucher no, purpose…" value="${escapeHtml(state.filters.query)}" />
+      </div>
+      <div class="toolbar-group">
+        <label for="f-department">Department</label>
+        <select id="f-department"><option value="">All</option></select>
+      </div>
+      <div class="toolbar-group">
+        <label for="f-sort-by">Sort by</label>
+        <select id="f-sort-by">
+          <option value="date">Date given</option>
+          <option value="amount">Amount</option>
+          <option value="department">Department</option>
+        </select>
+      </div>
+      <div class="toolbar-group">
+        <label>&nbsp;</label>
+        <button class="sort-dir-btn" id="f-sort-dir" type="button" title="Toggle sort direction">${state.filters.sort_dir === "asc" ? "↑ Asc" : "↓ Desc"}</button>
+      </div>
+      <div class="toolbar-group">
+        <label for="f-view">View</label>
+        <select id="f-view">
+          <option value="">All advances</option>
+          <option value="pending">Pending</option>
+          <option value="overdue">— Overdue</option>
+          <option value="needs_action">Needs action (payment/refund due)</option>
+          <option value="closed_payment_due">— Payment due</option>
+          <option value="closed_refund_due">— Refund due</option>
+          <option value="settled">Settled (closed/paid/refunded)</option>
+          <option value="closed">— Settled, nothing owed</option>
+          <option value="payment_made">— Paid</option>
+          <option value="refund_received">— Refunded</option>
+        </select>
+      </div>
+      <div class="toolbar-spacer"></div>
+      <div class="toolbar-group">
+        <label>&nbsp;</label>
+        <button class="btn btn-ghost" id="import-btn" type="button">Import Excel</button>
+      </div>
+      <div class="toolbar-group">
+        <label>&nbsp;</label>
+        <button class="btn" id="new-advance-btn" type="button">+ New advance</button>
+      </div>
+    </div>
+    <div class="ledger-wrap" id="ledger-wrap">
+      <div class="skeleton-row"></div><div class="skeleton-row"></div><div class="skeleton-row"></div>
+    </div>
+  `;
+
+  content.querySelector("#new-advance-btn").addEventListener("click", () => openAdvanceFormModal());
+  content.querySelector("#import-btn").addEventListener("click", () => openImportModal());
+
+  const deptSel = content.querySelector("#f-department");
+  deptSel.innerHTML = `<option value="">All</option>` +
+    state.departments.map(d => `<option value="${d.code}">${escapeHtml(d.code)} — ${escapeHtml(d.name)}</option>`).join("");
+  deptSel.value = state.filters.department;
+
+  content.querySelector("#f-view").value = state.filters.status;
+  content.querySelector("#f-sort-by").value = state.filters.sort_by;
+
+  content.querySelector("#f-view").addEventListener("change", (e) => {
+    state.filters.status = e.target.value; loadAdvances();
+  });
+  content.querySelector("#f-search").addEventListener("input", (e) => {
+    clearTimeout(state.searchDebounce);
+    state.searchDebounce = setTimeout(() => {
+      state.filters.query = e.target.value.trim();
+      loadAdvances();
+    }, 300);
+  });
+  deptSel.addEventListener("change", (e) => {
+    state.filters.department = e.target.value; loadAdvances();
+  });
+  content.querySelector("#f-sort-by").addEventListener("change", (e) => {
+    state.filters.sort_by = e.target.value; loadAdvances();
+  });
+  content.querySelector("#f-sort-dir").addEventListener("click", (e) => {
+    state.filters.sort_dir = state.filters.sort_dir === "asc" ? "desc" : "asc";
+    e.target.textContent = state.filters.sort_dir === "asc" ? "↑ Asc" : "↓ Desc";
+    loadAdvances();
+  });
+
+  loadAdvances();
+}
+
+async function loadAdvances() {
+  const wrap = document.getElementById("ledger-wrap");
+  if (!wrap) return;
+  wrap.innerHTML = `<div class="skeleton-row"></div><div class="skeleton-row"></div><div class="skeleton-row"></div>`;
+  const params = new URLSearchParams();
+  const f = state.filters;
+  if (f.department) params.set("department", f.department);
+  const overdueOnly = f.status === "overdue";
+  if (overdueOnly) params.set("status", "pending");
+  else if (f.status === "needs_action" || f.status === "settled") params.set("status_group", f.status);
+  else if (f.status) params.set("status", f.status);
+  if (f.query) params.set("query", f.query);
+  params.set("sort_by", f.sort_by);
+  params.set("sort_dir", f.sort_dir);
+  try {
+    let rows = await api("/api/advances?" + params.toString());
+    if (overdueOnly) rows = rows.filter(a => a.is_overdue);
+    state.advances = rows;
+    renderLedgerRows(rows);
+  } catch (err) {
+    wrap.innerHTML = `<div class="empty-card">${escapeHtml(err.message || "Could not load advances.")}</div>`;
+  }
+}
+
+/* ---- Status metadata -------------------------------------------------- */
+const STATUS_META = {
+  pending:            { label: "Pending",      stamp: "blue"  },
+  closed:             { label: "Settled",      stamp: "slate" },
+  closed_payment_due: { label: "Payment due",  stamp: "amber" },
+  payment_made:       { label: "Paid",         stamp: "green" },
+  closed_refund_due:  { label: "Refund due",   stamp: "red"   },
+  refund_received:    { label: "Refunded",     stamp: "green" },
+};
+
+function actionButtonsFor(a) {
+  const btns = [];
+  const mk = (label, action, cls = "btn-ghost") =>
+    `<button class="btn btn-sm ${cls}" data-action="${action}" data-id="${a.id}">${label}</button>`;
+
+  switch (a.status) {
+    case "pending":
+      btns.push(mk("Settle", "settle", "btn"));
+      if (a.email) btns.push(mk("Remind", "remind"));
+      btns.push(mk("Edit", "edit"));
+      btns.push(mk("Delete", "delete", "btn-danger-ghost"));
+      break;
+    case "closed":
+      btns.push(mk("Reopen", "reopen"));
+      break;
+    case "closed_payment_due":
+      btns.push(mk("Mark paid", "mark-paid", "btn"));
+      btns.push(mk("Reopen", "reopen"));
+      break;
+    case "closed_refund_due":
+      btns.push(mk("Record refund", "record-refund", "btn"));
+      btns.push(mk("Reopen", "reopen"));
+      break;
+    case "payment_made":
+    case "refund_received":
+      btns.push(mk("Reopen", "reopen"));
+      break;
+  }
+  btns.push(mk("History", "history"));
+  return btns.join("");
+}
+
+function statusSubline(a) {
+  if (a.status === "pending") {
+    const days = (a.days_outstanding === null || a.days_outstanding === undefined) ? 0 : a.days_outstanding;
+    return `${days} day${days === 1 ? "" : "s"} outstanding`;
+  }
+  if (a.status === "closed") return `Settled ${fmtDate(a.date_settled)} · nothing owed`;
+  if (a.status === "closed_payment_due") {
+    const payable = ((a.amount_spent === null || a.amount_spent === undefined) ? 0 : a.amount_spent) - a.amount;
+    return `Institute owes ${fmtINR(payable)}`;
+  }
+  if (a.status === "payment_made") return `Paid ${fmtDate(a.date_paid)}${a.payment_ref ? " · " + escapeHtml(a.payment_ref) : ""}`;
+  if (a.status === "closed_refund_due") return `Refund due ${fmtINR(a.amount_refundable)}`;
+  if (a.status === "refund_received") return `Received ${fmtDate(a.date_received)}${a.receipt_ref ? " · " + escapeHtml(a.receipt_ref) : ""}`;
+  return "";
+}
+
+function renderLedgerRows(rows) {
+  const wrap = document.getElementById("ledger-wrap");
+  if (!rows.length) {
+    wrap.innerHTML = `<div class="empty-card">No advances match these filters. Try widening the search, or add a new advance.</div>`;
+    return;
+  }
+  wrap.innerHTML = rows.map((a, i) => {
+    const meta = STATUS_META[a.status] || { label: a.status, stamp: "slate" };
+    const overdueClass = a.is_overdue ? " is-overdue" : "";
+    return `
+      <div class="ledger-card${overdueClass}" data-row-id="${a.id}" style="animation-delay:${Math.min(i,10) * 25}ms;">
+        <div class="lc-voucher">${escapeHtml(a.voucher_no || "—")}<div class="cell-sub">${escapeHtml(a.financial_year || "")}</div></div>
+        <div class="lc-person">
+          <div class="cell-name">${escapeHtml(a.name)}</div>
+          <div class="cell-sub">Roll no. ${escapeHtml(a.identifier || "—")}</div>
+        </div>
+        <div class="lc-dept"><span class="dept-pill">${escapeHtml(a.department || "—")}</span><div class="cell-sub">${escapeHtml(deptName(a.department))}</div></div>
+        <div class="lc-amount">${fmtINR(a.amount)}</div>
+        <div class="lc-date">${fmtDate(a.date_given)}
+          ${a.due_date ? `<div class="cell-sub">Due ${fmtDate(a.due_date)}</div>` : ""}
+          ${a.is_overdue ? `<div class="overdue-flag">OVERDUE · ${a.days_overdue}d</div>` : ""}
+        </div>
+        <div class="lc-status">
+          <span class="stamp ${meta.stamp}">${escapeHtml(meta.label)}</span>
+          <div class="cell-sub">${escapeHtml(statusSubline(a))}</div>
+        </div>
+        <div class="lc-actions"><div class="btn-row" style="justify-content:flex-end;">${actionButtonsFor(a)}</div></div>
+      </div>
+    `;
+  }).join("");
+
+  wrap.querySelectorAll("button[data-action]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = Number(btn.getAttribute("data-id"));
+      const action = btn.getAttribute("data-action");
+      const advance = state.advances.find(x => x.id === id);
+      if (!advance) return;
+      handleRowAction(action, advance);
+    });
+  });
+}
+
+function handleRowAction(action, advance) {
+  switch (action) {
+    case "edit": return openAdvanceFormModal(advance);
+    case "settle": return openSettleModal(advance);
+    case "mark-paid": return openMarkPaidModal(advance);
+    case "record-refund": return openRecordRefundModal(advance);
+    case "history": return openHistoryModal(advance);
+    case "reopen": return quickReopen(advance);
+    case "delete": return quickDelete(advance);
+    case "remind": return openRemindModal(advance);
+  }
+}
+
+async function quickReopen(advance) {
+  if (!confirm(`Reopen this advance back to Pending? This clears any settlement figures recorded on it.`)) return;
+  try {
+    await api(`/api/advances/${advance.id}/reopen`, { method: "POST" });
+    toast(`Advance reopened.`, "success");
+    refreshCurrentView();
+  } catch (err) { toast(err.message || "Could not reopen.", "error"); }
+}
+
+async function quickDelete(advance) {
+  if (!confirm(`Delete the advance for ${advance.name} (${advance.voucher_no})? This cannot be undone.`)) return;
+  try {
+    await api(`/api/advances/${advance.id}`, { method: "DELETE" });
+    toast(`Advance deleted.`, "success");
+    refreshCurrentView();
+  } catch (err) { toast(err.message || "Could not delete.", "error"); }
+}
+
+function refreshCurrentView() {
+  if (state.activeTab === "dashboard") renderDashboard();
+  else loadAdvances();
+}
+
+/* ==========================================================================
+   REPORTS TAB
+   ========================================================================== */
+const reportState = { department: "", view: "", date_from: "", date_to: "", query: "" };
+
+function renderReportsTab() {
+  const content = document.getElementById("tab-content");
+  content.innerHTML = `
+    <div class="panel" style="margin-bottom:18px;">
+      <div class="panel-head">
+        <div>
+          <h3>Report filters</h3>
+          <div class="panel-head-sub">Narrow the register down, then export it as Excel or PDF.</div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="toolbar" style="box-shadow:none; border:none; padding:0; margin-bottom:0;">
+          <div class="toolbar-group">
+            <label for="rp-department">Department</label>
+            <select id="rp-department"><option value="">All</option></select>
+          </div>
+          <div class="toolbar-group">
+            <label for="rp-view">View</label>
+            <select id="rp-view">
+              <option value="">All advances</option>
+              <option value="pending">Pending</option>
+              <option value="needs_action">Needs action (payment/refund due)</option>
+              <option value="closed_payment_due">— Payment due</option>
+              <option value="closed_refund_due">— Refund due</option>
+              <option value="settled">Settled (closed/paid/refunded)</option>
+              <option value="closed">— Settled, nothing owed</option>
+              <option value="payment_made">— Paid</option>
+              <option value="refund_received">— Refunded</option>
+            </select>
+          </div>
+          <div class="toolbar-group">
+            <label for="rp-from">Date given — from</label>
+            <input id="rp-from" type="date" />
+          </div>
+          <div class="toolbar-group">
+            <label for="rp-to">Date given — to</label>
+            <input id="rp-to" type="date" />
+          </div>
+          <div class="toolbar-group">
+            <label for="rp-search">Search</label>
+            <input id="rp-search" type="search" placeholder="Name, roll no, voucher no, purpose…" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-grid" style="grid-template-columns: 1fr 1.4fr;">
+      <div class="panel">
+        <div class="panel-head"><div><h3>Preview</h3><div class="panel-head-sub">What this report will contain</div></div></div>
+        <div class="panel-body" id="rp-preview"><div class="dash-empty">Loading…</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h3>Export</h3><div class="panel-head-sub">Downloads reflect the filters on the left</div></div></div>
+        <div class="panel-body">
+          <div class="btn-row" style="margin-bottom:14px;">
+            <button class="btn" id="rp-export-excel" type="button">${ICONS.download} Export Excel</button>
+            <button class="btn btn-ghost" id="rp-export-pdf" type="button">${ICONS.download} Export PDF</button>
+          </div>
+          <div class="field-hint">
+            Excel includes a full row-by-row register plus a summary sheet with totals by status.
+            PDF is a print-ready voucher register with the same filters applied.
+          </div>
+          <div id="rp-export-status"></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const deptSel = content.querySelector("#rp-department");
+  deptSel.innerHTML = `<option value="">All</option>` +
+    state.departments.map(d => `<option value="${d.code}">${escapeHtml(d.code)} — ${escapeHtml(d.name)}</option>`).join("");
+  deptSel.value = reportState.department;
+  content.querySelector("#rp-view").value = reportState.view;
+  content.querySelector("#rp-from").value = reportState.date_from;
+  content.querySelector("#rp-to").value = reportState.date_to;
+  content.querySelector("#rp-search").value = reportState.query;
+
+  let searchDebounce;
+  const onChange = () => {
+    reportState.department = deptSel.value;
+    reportState.view = content.querySelector("#rp-view").value;
+    reportState.date_from = content.querySelector("#rp-from").value;
+    reportState.date_to = content.querySelector("#rp-to").value;
+    reportState.query = content.querySelector("#rp-search").value.trim();
+    refreshReportPreview();
+  };
+  deptSel.addEventListener("change", onChange);
+  content.querySelector("#rp-view").addEventListener("change", onChange);
+  content.querySelector("#rp-from").addEventListener("change", onChange);
+  content.querySelector("#rp-to").addEventListener("change", onChange);
+  content.querySelector("#rp-search").addEventListener("input", () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(onChange, 300);
+  });
+
+  content.querySelector("#rp-export-excel").addEventListener("click", () => downloadReport("excel"));
+  content.querySelector("#rp-export-pdf").addEventListener("click", () => downloadReport("pdf"));
+
+  refreshReportPreview();
+}
+
+function reportParams() {
+  const params = new URLSearchParams();
+  if (reportState.department) params.set("department", reportState.department);
+  if (reportState.view === "needs_action" || reportState.view === "settled") params.set("status_group", reportState.view);
+  else if (reportState.view) params.set("status", reportState.view);
+  if (reportState.date_from) params.set("date_from", reportState.date_from);
+  if (reportState.date_to) params.set("date_to", reportState.date_to);
+  if (reportState.query) params.set("query", reportState.query);
+  return params;
+}
+
+async function refreshReportPreview() {
+  const box = document.getElementById("rp-preview");
+  if (!box) return;
+  box.innerHTML = `<div class="dash-empty">Loading…</div>`;
+  try {
+    // list_advances doesn't take a date range, so fetch on the other filters
+    // and apply the date bounds client-side -- the export endpoint applies
+    // the exact same bounds server-side, so this preview stays accurate.
+    const listParams = new URLSearchParams(reportParams());
+    listParams.delete("date_from"); listParams.delete("date_to");
+    let rows = await api("/api/advances?" + listParams.toString());
+    if (reportState.date_from) rows = rows.filter(a => a.date_given >= reportState.date_from);
+    if (reportState.date_to) rows = rows.filter(a => a.date_given <= reportState.date_to);
+
+    const total = rows.reduce((s, a) => s + (a.amount || 0), 0);
+    const byStatus = {};
+    rows.forEach(a => { byStatus[a.status] = (byStatus[a.status] || 0) + 1; });
+
+    box.innerHTML = `
+      <div class="stat-value" style="font-size:30px;">${rows.length.toLocaleString("en-IN")}</div>
+      <div class="stat-foot" style="margin-bottom:14px;">record${rows.length === 1 ? "" : "s"} · ${fmtINR(total)} total advance value</div>
+      ${Object.keys(byStatus).length ? `
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${Object.entries(byStatus).map(([s, c]) => `<span class="stamp ${(STATUS_META[s]||{}).stamp || "slate"}">${escapeHtml((STATUS_META[s]||{}).label || s)} · ${c}</span>`).join("")}
+        </div>` : `<div class="dash-empty">No advances match these filters.</div>`}
+    `;
+  } catch (err) {
+    box.innerHTML = `<div class="dash-empty">${escapeHtml(err.message || "Could not load preview.")}</div>`;
+  }
+}
+
+async function downloadReport(kind) {
+  const statusBox = document.getElementById("rp-export-status");
+  const btn = document.getElementById(kind === "excel" ? "rp-export-excel" : "rp-export-pdf");
+  const originalLabel = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Preparing…`;
+  statusBox.innerHTML = "";
+  try {
+    const path = `/api/reports/${kind}?` + reportParams().toString();
+    const headers = {};
+    if (state.token) headers["Authorization"] = "Bearer " + state.token;
+    const res = await fetch(state.apiBase.replace(/\/$/, "") + path, { headers });
+    if (!res.ok) {
+      let msg = `Export failed (${res.status}).`;
+      try { const j = await res.json(); msg = j.error || j.message || msg; } catch (e) {}
+      throw new Error(msg);
+    }
+    const blob = await res.blob();
+    const disposition = res.headers.get("Content-Disposition") || "";
+    const match = disposition.match(/filename="?([^"]+)"?/);
+    const filename = match ? match[1] : `advance_register.${kind === "excel" ? "xlsx" : "pdf"}`;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    toast(`${kind === "excel" ? "Excel" : "PDF"} report downloaded.`, "success");
+  } catch (err) {
+    statusBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not generate report.")}</div>`;
+  } finally {
+    btn.disabled = false; btn.innerHTML = originalLabel;
+  }
+}
+
+/* ==========================================================================
+   MODAL INFRASTRUCTURE
+   ========================================================================== */
+function openModal(innerHtml, { wide = false } = {}) {
+  closeModal();
+  const root = document.getElementById("modal-root");
+  const overlay = el(`<div class="modal-overlay"><div class="modal-card${wide ? " wide" : ""}">${innerHtml}</div></div>`);
+  root.appendChild(overlay);
+  overlay.addEventListener("mousedown", (e) => { if (e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", escCloseHandler);
+  return overlay;
+}
+function escCloseHandler(e) { if (e.key === "Escape") closeModal(); }
+function closeModal() {
+  document.removeEventListener("keydown", escCloseHandler);
+  const root = document.getElementById("modal-root");
+  root.innerHTML = "";
+}
+
+/* ==========================================================================
+   CREATE / EDIT ADVANCE FORM (students only — no category)
+   ========================================================================== */
+function departmentOptions(selected) {
+  return `<option value="">Select department…</option>` +
+    state.departments.map(d => `<option value="${d.code}" ${d.code === selected ? "selected" : ""}>${escapeHtml(d.code)} — ${escapeHtml(d.name)}</option>`).join("");
+}
+
+function openAdvanceFormModal(existing) {
+  const isEdit = !!existing;
+  const a = existing || {};
+  const overlay = openModal(`
+    <div class="modal-head">
+      <div>
+        <div class="modal-eyebrow">${isEdit ? escapeHtml(a.voucher_no || "") : "New voucher"}</div>
+        <h2>${isEdit ? "Edit advance" : "New advance"}</h2>
+      </div>
+      <button class="modal-close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="form-error"></div>
+      <form id="advance-form">
+        <div class="form-grid">
+          <div class="field span-2">
+            <label for="af-voucher">Voucher no. ${isEdit ? "" : `<span style="text-transform:none;font-weight:400;">(optional — leave blank to auto-assign)</span>`}</label>
+            <input id="af-voucher" value="${escapeHtml(a.voucher_no || "")}" ${isEdit ? "required" : ""} />
+            <div class="field-hint" id="af-voucher-hint">${isEdit ? "Must stay unique across the register — editing this only renumbers the voucher, it doesn't move any other data." : "Loading the next auto-assigned number…"}</div>
+          </div>
+          <div class="field">
+            <label for="af-identifier">Roll no.</label>
+            <input id="af-identifier" value="${escapeHtml(a.identifier || "")}" required />
+          </div>
+          <div class="field">
+            <label for="af-name">Name</label>
+            <input id="af-name" value="${escapeHtml(a.name || "")}" required />
+          </div>
+          <div class="field">
+            <label for="af-email">Email</label>
+            <input id="af-email" type="email" value="${escapeHtml(a.email || "")}" />
+          </div>
+          <div class="field">
+            <label for="af-department">Department</label>
+            <select id="af-department" required>${departmentOptions(a.department)}</select>
+          </div>
+          <div class="field">
+            <label for="af-amount">Amount (₹)</label>
+            <input id="af-amount" type="number" min="0.01" step="0.01" value="${(a.amount === null || a.amount === undefined) ? '' : a.amount}" required />
+          </div>
+          <div class="field">
+            <label for="af-date-given">Date given</label>
+            <input id="af-date-given" type="date" value="${a.date_given || todayISO()}" required />
+          </div>
+          <div class="field">
+            <label for="af-conf-start">Conference start</label>
+            <input id="af-conf-start" type="date" value="${a.conf_start_date || ""}" required />
+          </div>
+          <div class="field">
+            <label for="af-conf-end">Conference end</label>
+            <input id="af-conf-end" type="date" value="${a.conf_end_date || ""}" required />
+          </div>
+          <div class="field span-2">
+            <label for="af-purpose">Purpose</label>
+            <textarea id="af-purpose" rows="2">${escapeHtml(a.purpose || "")}</textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn" type="submit" form="advance-form" id="af-submit">${isEdit ? "Save changes" : "Create advance"}</button>
+    </div>
+  `);
+
+  overlay.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModal));
+
+  const voucherInput = overlay.querySelector("#af-voucher");
+  const voucherHint = overlay.querySelector("#af-voucher-hint");
+  if (!isEdit) {
+    const refreshVoucherPreview = async () => {
+      const dateGiven = overlay.querySelector("#af-date-given").value || todayISO();
+      try {
+        const { voucher_no } = await api(`/api/next-voucher?date_given=${encodeURIComponent(dateGiven)}`);
+        voucherInput.placeholder = voucher_no;
+        voucherHint.textContent = `Leave blank to auto-assign ${voucher_no}, or type your own.`;
+      } catch (err) {
+        voucherHint.textContent = "Leave blank to auto-assign the next number, or type your own.";
+      }
+    };
+    refreshVoucherPreview();
+    overlay.querySelector("#af-date-given").addEventListener("change", refreshVoucherPreview);
+  }
+
+  overlay.querySelector("#advance-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errBox = overlay.querySelector("#form-error");
+    errBox.innerHTML = "";
+    const payload = {
+      identifier: overlay.querySelector("#af-identifier").value.trim(),
+      name: overlay.querySelector("#af-name").value.trim(),
+      email: overlay.querySelector("#af-email").value.trim(),
+      department: overlay.querySelector("#af-department").value,
+      amount: overlay.querySelector("#af-amount").value,
+      date_given: overlay.querySelector("#af-date-given").value,
+      conf_start_date: overlay.querySelector("#af-conf-start").value,
+      conf_end_date: overlay.querySelector("#af-conf-end").value,
+      purpose: overlay.querySelector("#af-purpose").value.trim(),
+      voucher_no: voucherInput.value.trim(),
+    };
+    const submitBtn = overlay.querySelector("#af-submit");
+    submitBtn.disabled = true;
+    try {
+      if (isEdit) {
+        await api(`/api/advances/${a.id}`, { method: "PUT", body: payload });
+        toast("Advance updated.", "success");
+      } else {
+        await api("/api/advances", { method: "POST", body: payload });
+        toast("Advance created.", "success");
+      }
+      closeModal();
+      refreshCurrentView();
+    } catch (err) {
+      let msg = err.message || "Something went wrong.";
+      errBox.innerHTML = `<div class="form-error-banner">${escapeHtml(msg)}</div>`;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+/* ==========================================================================
+   SETTLE ADVANCE MODAL
+   pending -> closed / closed_payment_due / closed_refund_due, driven
+   entirely by amount actually spent. Always shows a computed preview and
+   requires an explicit "Confirm & settle" click, even on an exact match.
+   ========================================================================== */
+function openSettleModal(advance) {
+  const overlay = openModal(`
+    <div class="modal-head">
+      <div>
+        <div class="modal-eyebrow">${escapeHtml(advance.voucher_no || "")}</div>
+        <h2>Settle advance</h2>
+      </div>
+      <button class="modal-close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="calc-box">
+        Advance given to <strong>${escapeHtml(advance.name)}</strong>: <strong>${fmtINR(advance.amount)}</strong>
+      </div>
+      <div id="settle-error"></div>
+      <form id="settle-form">
+        <div class="field">
+          <label for="sf-spent">Amount actually spent (₹)</label>
+          <input id="sf-spent" type="number" min="0" step="0.01" required />
+        </div>
+        <div id="sf-outcome"></div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn" type="submit" form="settle-form" id="settle-submit">Preview outcome</button>
+    </div>
+  `);
+  overlay.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModal));
+
+  const spentInput = overlay.querySelector("#sf-spent");
+  const outcomeBox = overlay.querySelector("#sf-outcome");
+  const submitBtn = overlay.querySelector("#settle-submit");
+  let awaitingConfirm = false;
+
+  // Any change to the spent amount invalidates a pending confirm step.
+  spentInput.addEventListener("input", () => {
+    if (awaitingConfirm) {
+      awaitingConfirm = false;
+      submitBtn.textContent = "Preview outcome";
+      outcomeBox.innerHTML = "";
+    }
+  });
+
+  async function submitSettle() {
+    const errBox = overlay.querySelector("#settle-error");
+    errBox.innerHTML = "";
+    const spent = spentInput.value;
+    if (spent === "" || isNaN(Number(spent))) {
+      errBox.innerHTML = `<div class="form-error-banner">Enter the amount actually spent.</div>`;
+      return;
+    }
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span class="spinner"></span>`;
+    try {
+      const result = await api(`/api/advances/${advance.id}/settle`, {
+        method: "POST",
+        body: { amount_spent: spent, confirm: awaitingConfirm },
+      });
+      // Reached only when confirm=true succeeded.
+      toast(result.message || "Advance settled.", "success");
+      closeModal();
+      refreshCurrentView();
+    } catch (err) {
+      if (err.status === 409 && err.data && err.data.confirm_required) {
+        const cls = err.data.preview.status === "closed" ? "" :
+                    err.data.preview.status === "closed_payment_due" ? "amber" : "rose";
+        outcomeBox.innerHTML = `
+          <div class="calc-box ${cls}">${escapeHtml(err.data.message)}</div>
+          <div class="field-hint" style="margin-bottom:8px;">Nothing has been saved yet — confirm to finalize this settlement.</div>
+        `;
+        awaitingConfirm = true;
+        submitBtn.textContent = "Confirm & settle";
+      } else {
+        errBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not settle advance.")}</div>`;
+        awaitingConfirm = false;
+        submitBtn.textContent = "Preview outcome";
+      }
+    } finally {
+      submitBtn.disabled = false;
+      if (submitBtn.textContent.trim() === "") submitBtn.textContent = awaitingConfirm ? "Confirm & settle" : "Preview outcome";
+    }
+  }
+
+  overlay.querySelector("#settle-form").addEventListener("submit", (e) => { e.preventDefault(); submitSettle(); });
+}
+
+/* ==========================================================================
+   MARK PAID MODAL  (closed_payment_due -> payment_made)
+   ========================================================================== */
+function openMarkPaidModal(advance) {
+  const expected = ((advance.amount_spent === null || advance.amount_spent === undefined) ? 0 : advance.amount_spent) - advance.amount;
+  const overlay = openModal(`
+    <div class="modal-head">
+      <div>
+        <div class="modal-eyebrow">${escapeHtml(advance.voucher_no || "")}</div>
+        <h2>Record payment to ${escapeHtml(advance.name)}</h2>
+      </div>
+      <button class="modal-close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="calc-box amber">Expected payment: <strong>${fmtINR(expected)}</strong></div>
+      <div id="mp-error"></div>
+      <form id="mp-form">
+        <div class="form-grid">
+          <div class="field">
+            <label for="mp-amount">Amount paid (₹)</label>
+            <input id="mp-amount" type="number" min="0.01" step="0.01" value="${expected.toFixed(2)}" required />
+          </div>
+          <div class="field">
+            <label for="mp-date">Date paid</label>
+            <input id="mp-date" type="date" value="${todayISO()}" required />
+          </div>
+          <div class="field span-2">
+            <label for="mp-ref">Payment reference <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+            <input id="mp-ref" placeholder="Cheque / transfer no." />
+          </div>
+        </div>
+        <div id="mp-mismatch"></div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn" type="submit" form="mp-form" id="mp-submit">Mark paid</button>
+    </div>
+  `);
+  overlay.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModal));
+
+  async function submitMarkPaid(confirm) {
+    const errBox = overlay.querySelector("#mp-error");
+    const mismatchBox = overlay.querySelector("#mp-mismatch");
+    errBox.innerHTML = ""; mismatchBox.innerHTML = "";
+    const payload = {
+      amount_paid: overlay.querySelector("#mp-amount").value,
+      date_paid: overlay.querySelector("#mp-date").value,
+      payment_ref: overlay.querySelector("#mp-ref").value.trim(),
+      confirm: !!confirm,
+    };
+    const submitBtn = overlay.querySelector("#mp-submit");
+    submitBtn.disabled = true;
+    try {
+      await api(`/api/advances/${advance.id}/mark-paid`, { method: "POST", body: payload });
+      toast("Payment recorded.", "success");
+      closeModal();
+      refreshCurrentView();
+    } catch (err) {
+      if (err.status === 409 && err.data && err.data.mismatch) {
+        mismatchBox.innerHTML = `
+          <div class="mismatch-box">
+            ${escapeHtml(err.data.message)}
+            <div><button class="btn btn-sm btn-danger" type="button" id="mp-confirm-anyway">Confirm anyway</button></div>
+          </div>`;
+        mismatchBox.querySelector("#mp-confirm-anyway").addEventListener("click", () => submitMarkPaid(true));
+      } else {
+        errBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not record payment.")}</div>`;
+      }
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+  overlay.querySelector("#mp-form").addEventListener("submit", (e) => { e.preventDefault(); submitMarkPaid(false); });
+}
+
+/* ==========================================================================
+   RECORD REFUND MODAL  (closed_refund_due -> refund_received)
+   ========================================================================== */
+function openRecordRefundModal(advance) {
+  const expected = (advance.amount_refundable === null || advance.amount_refundable === undefined) ? 0 : advance.amount_refundable;
+  const overlay = openModal(`
+    <div class="modal-head">
+      <div>
+        <div class="modal-eyebrow">${escapeHtml(advance.voucher_no || "")}</div>
+        <h2>Record refund from ${escapeHtml(advance.name)}</h2>
+      </div>
+      <button class="modal-close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="calc-box rose">Refund due: <strong>${fmtINR(expected)}</strong></div>
+      <div id="rf-error"></div>
+      <form id="rf-form">
+        <div class="form-grid">
+          <div class="field">
+            <label for="rf-amount">Amount received (₹)</label>
+            <input id="rf-amount" type="number" min="0.01" step="0.01" value="${expected.toFixed(2)}" required />
+          </div>
+          <div class="field">
+            <label for="rf-date">Date received</label>
+            <input id="rf-date" type="date" value="${todayISO()}" required />
+          </div>
+          <div class="field span-2">
+            <label for="rf-ref">Receipt reference <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+            <input id="rf-ref" placeholder="Receipt no." />
+          </div>
+        </div>
+        <div id="rf-mismatch"></div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn" type="submit" form="rf-form" id="rf-submit">Record refund</button>
+    </div>
+  `);
+  overlay.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModal));
+
+  async function submitRefund(confirm) {
+    const errBox = overlay.querySelector("#rf-error");
+    const mismatchBox = overlay.querySelector("#rf-mismatch");
+    errBox.innerHTML = ""; mismatchBox.innerHTML = "";
+    const payload = {
+      amount_received: overlay.querySelector("#rf-amount").value,
+      date_received: overlay.querySelector("#rf-date").value,
+      receipt_ref: overlay.querySelector("#rf-ref").value.trim(),
+      confirm: !!confirm,
+    };
+    const submitBtn = overlay.querySelector("#rf-submit");
+    submitBtn.disabled = true;
+    try {
+      await api(`/api/advances/${advance.id}/record-refund`, { method: "POST", body: payload });
+      toast("Refund recorded.", "success");
+      closeModal();
+      refreshCurrentView();
+    } catch (err) {
+      if (err.status === 409 && err.data && err.data.mismatch) {
+        mismatchBox.innerHTML = `
+          <div class="mismatch-box">
+            ${escapeHtml(err.data.message)}
+            <div><button class="btn btn-sm btn-danger" type="button" id="rf-confirm-anyway">Confirm anyway</button></div>
+          </div>`;
+        mismatchBox.querySelector("#rf-confirm-anyway").addEventListener("click", () => submitRefund(true));
+      } else {
+        errBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not record refund.")}</div>`;
+      }
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+  overlay.querySelector("#rf-form").addEventListener("submit", (e) => { e.preventDefault(); submitRefund(false); });
+}
+
+/* ==========================================================================
+   HISTORY MODAL
+   ========================================================================== */
+const HISTORY_FIELD_LABELS = {
+  created: "Created", status: "Status", amount: "Amount", amount_spent: "Amount spent",
+  amount_refundable: "Refund due", amount_received: "Amount received", amount_paid: "Amount paid",
+  date_given: "Date given", date_settled: "Date settled", department: "Department",
+  conf_start_date: "Conference start", conf_end_date: "Conference end", name: "Name",
+  identifier: "Roll no.", email: "Email", purpose: "Purpose",
+};
+function historyFieldLabel(f) { return HISTORY_FIELD_LABELS[f] || f; }
+
+function openHistoryModal(advance) {
+  const overlay = openModal(`
+    <div class="modal-head">
+      <div>
+        <div class="modal-eyebrow">${escapeHtml(advance.voucher_no || "")}</div>
+        <h2>History — ${escapeHtml(advance.name)}</h2>
+      </div>
+      <button class="modal-close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <ul class="history-list" id="history-list"><li class="history-empty">Loading…</li></ul>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close>Close</button>
+    </div>
+  `, { wide: true });
+  overlay.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModal));
+
+  api(`/api/advances/${advance.id}/history`)
+    .then(rows => {
+      const list = overlay.querySelector("#history-list");
+      if (!rows.length) {
+        list.innerHTML = `<li class="history-empty">No history recorded yet.</li>`;
+        return;
+      }
+      list.innerHTML = rows.slice().reverse().map(r => `
+        <li class="history-item">
+          <div>
+            <div class="history-when">${escapeHtml(fmtDateTime(r.changed_at))}</div>
+            <div class="history-who">${escapeHtml(r.changed_by || "system")}</div>
+          </div>
+          <div class="history-what">
+            <span class="history-field">${escapeHtml(historyFieldLabel(r.field))}</span>
+            <span class="history-diff">
+              ${r.old_value !== null ? `<del>${escapeHtml(r.old_value)}</del> → ` : ""}<ins>${escapeHtml((r.new_value === null || r.new_value === undefined) ? "—" : r.new_value)}</ins>
+            </span>
+          </div>
+        </li>
+      `).join("");
+    })
+    .catch(err => {
+      overlay.querySelector("#history-list").innerHTML =
+        `<li class="history-empty">${escapeHtml(err.message || "Could not load history.")}</li>`;
+    });
+}
+
+/* ==========================================================================
+   REMIND MODAL
+   ========================================================================== */
+async function sendBulkReminders() {
+  const btn = document.getElementById("dash-remind-all");
+  if (!confirm(
+    "Send the standard reminder email to every overdue pending advance that has an email on file " +
+    "and hasn't been reminded in the last few days? This may send several emails at once."
+  )) return;
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Sending…";
+  try {
+    const result = await api("/api/advances/remind/bulk", { method: "POST" });
+    const sentCount = result.sent.length;
+    const failedCount = result.failed.length;
+    if (result.checked === 0) {
+      toast("No overdue advances are currently due a reminder.");
+    } else if (failedCount === 0) {
+      toast(`Sent ${sentCount} reminder${sentCount === 1 ? "" : "s"}.`, "success");
+    } else {
+      toast(`Sent ${sentCount}, ${failedCount} failed — check they have a valid email address.`, "error");
+    }
+    loadDashboardData(true);
+  } catch (err) {
+    toast(err.message || "Could not send reminders.", "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+function openRemindModal(advance) {
+  const overlay = openModal(`
+    <div class="modal-head">
+      <div>
+        <div class="modal-eyebrow">${escapeHtml(advance.voucher_no || "")}</div>
+        <h2>Send reminder</h2>
+      </div>
+      <button class="modal-close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="remind-loading">Loading preview…</div>
+      <div id="remind-content" class="hidden">
+        <div class="field-hint" id="remind-to" style="margin-bottom:10px;"></div>
+        <div class="field">
+          <label for="remind-subject">Subject</label>
+          <input id="remind-subject" />
+        </div>
+        <div class="field">
+          <label for="remind-body">Message</label>
+          <textarea id="remind-body" rows="9"></textarea>
+        </div>
+        <div id="remind-error"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn hidden" type="button" id="remind-send">Send email</button>
+    </div>
+  `);
+  overlay.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModal));
+
+  api(`/api/advances/${advance.id}/remind/preview`)
+    .then(data => {
+      overlay.querySelector("#remind-loading").classList.add("hidden");
+      overlay.querySelector("#remind-content").classList.remove("hidden");
+      overlay.querySelector("#remind-send").classList.remove("hidden");
+      overlay.querySelector("#remind-to").textContent = "To: " + data.to;
+      overlay.querySelector("#remind-subject").value = data.subject;
+      overlay.querySelector("#remind-body").value = data.body;
+    })
+    .catch(err => {
+      overlay.querySelector("#remind-loading").innerHTML =
+        `<div class="form-error-banner">${escapeHtml(err.message || "Could not build reminder preview.")}</div>`;
+    });
+
+  overlay.querySelector("#remind-send").addEventListener("click", async () => {
+    const errBox = overlay.querySelector("#remind-error");
+    errBox.innerHTML = "";
+    const subject = overlay.querySelector("#remind-subject").value.trim();
+    const body = overlay.querySelector("#remind-body").value.trim();
+    if (!subject || !body) return;
+    const btn = overlay.querySelector("#remind-send");
+    btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Sending…`;
+    try {
+      const data = await api(`/api/advances/${advance.id}/remind/send`, { method: "POST", body: { subject, body } });
+      toast(`Reminder sent to ${data.to}.`, "success");
+      closeModal();
+    } catch (err) {
+      errBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not send reminder.")}</div>`;
+    } finally {
+      btn.disabled = false; btn.textContent = "Send email";
+    }
+  });
+}
+
+/* ==========================================================================
+   IMPORT EXCEL MODAL
+   ========================================================================== */
+function openImportModal() {
+  const overlay = openModal(`
+    <div class="modal-head">
+      <div><h2>Import from Excel</h2></div>
+      <button class="modal-close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="import-file">Excel file (.xlsx)</label>
+        <input type="file" id="import-file" accept=".xlsx" />
+      </div>
+      <div class="field-hint">
+        Columns recognised: Roll No, Name, Amount, Date Given, and optionally Email, Department,
+        Conference Start/End Date, Purpose, Voucher No. Matching an existing pending record (by roll no + name)
+        updates it; anything else is added as new, pending settlement. Leave Voucher No. blank to auto-generate it.
+      </div>
+      <div id="import-status"></div>
+      <div id="import-results"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close>Close</button>
+      <button class="btn" type="button" id="import-submit">Import</button>
+    </div>
+  `);
+  overlay.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => { closeModal(); refreshCurrentView(); }));
+
+  overlay.querySelector("#import-submit").addEventListener("click", async () => {
+    const fileInput = overlay.querySelector("#import-file");
+    const file = fileInput.files[0];
+    const statusBox = overlay.querySelector("#import-status");
+    const resultsBox = overlay.querySelector("#import-results");
+    resultsBox.innerHTML = "";
+    if (!file) {
+      statusBox.innerHTML = `<div class="form-error-banner">Choose a file first.</div>`;
+      return;
+    }
+    const form = new FormData();
+    form.append("file", file);
+
+    const btn = overlay.querySelector("#import-submit");
+    btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Importing…`;
+    statusBox.innerHTML = `<div class="field-hint">Importing…</div>`;
+    try {
+      const data = await api("/api/import", { method: "POST", form });
+      statusBox.innerHTML = `<div class="form-success-banner">Done: ${data.inserted} added, ${data.updated} updated, ${data.skipped.length} skipped.</div>`;
+      if (data.skipped.length) {
+        resultsBox.innerHTML = "<ul class='history-list'>" + data.skipped.map(s =>
+          `<li class="history-item"><div class="history-what">Row ${s.row}: ${escapeHtml(s.reason)}</div></li>`
+        ).join("") + "</ul>";
+      }
+      refreshCurrentView();
+    } catch (err) {
+      statusBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Import failed.")}</div>`;
+    } finally {
+      btn.disabled = false; btn.textContent = "Import";
+    }
+  });
+}
+
+/* ==========================================================================
+   CHANGE PASSWORD MODAL
+   ========================================================================== */
+function openChangePasswordModal() {
+  const overlay = openModal(`
+    <div class="modal-head">
+      <div><h2>Change password</h2></div>
+      <button class="modal-close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="cp-error"></div>
+      <form id="cp-form">
+        <div class="field">
+          <label for="cp-current">Current password</label>
+          <input id="cp-current" type="password" autocomplete="current-password" required />
+        </div>
+        <div class="field">
+          <label for="cp-new">New password (min 6 characters)</label>
+          <input id="cp-new" type="password" autocomplete="new-password" required />
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn" type="submit" form="cp-form">Change password</button>
+    </div>
+  `);
+  overlay.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModal));
+
+  overlay.querySelector("#cp-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errBox = overlay.querySelector("#cp-error");
+    errBox.innerHTML = "";
+    const current_password = overlay.querySelector("#cp-current").value;
+    const new_password = overlay.querySelector("#cp-new").value;
+    try {
+      await api("/api/me/password", { method: "POST", body: { current_password, new_password } });
+      toast("Password changed.", "success");
+      closeModal();
+    } catch (err) {
+      errBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not change password.")}</div>`;
+    }
+  });
+}
+
+/* ==========================================================================
+   MANAGE USERS MODAL (admin only)
+   ========================================================================== */
+function openManageUsersModal() {
+  const overlay = openModal(`
+    <div class="modal-head">
+      <div><h2>Manage users</h2></div>
+      <button class="modal-close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="mu-list"><div class="field-hint">Loading…</div></div>
+      <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--border-soft);">
+        <div class="field">
+          <label for="mu-username">New username</label>
+          <input id="mu-username" />
+        </div>
+        <div class="field">
+          <label for="mu-email">Email (needed for that user's self-service password reset)</label>
+          <input id="mu-email" type="email" />
+        </div>
+        <div class="field">
+          <label for="mu-password">Password (min 6 characters)</label>
+          <input id="mu-password" type="password" />
+        </div>
+        <div class="field">
+          <label for="mu-role">Role</label>
+          <select id="mu-role">
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div id="mu-create-error"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close>Close</button>
+      <button class="btn" type="button" id="mu-create-btn">Create user</button>
+    </div>
+  `, { wide: true });
+  overlay.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModal));
+
+  async function refreshUserList() {
+    const listBox = overlay.querySelector("#mu-list");
+    try {
+      const users = await api("/api/users");
+      listBox.innerHTML = users.map(u => `
+        <div class="history-item" style="align-items:center;">
+          <div>
+            <div class="history-who">${escapeHtml(u.username)} <span class="pill">${escapeHtml(u.role)}</span></div>
+            <div class="field-hint">${escapeHtml(u.email || "no email on file")}</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-sm btn-ghost" data-reset-id="${u.id}" data-reset-name="${escapeHtml(u.username)}">Reset password</button>
+            ${u.username === state.user.username ? "" : `<button class="btn btn-sm btn-danger-ghost" data-del-id="${u.id}">Delete</button>`}
+          </div>
+        </div>
+      `).join("");
+
+      listBox.querySelectorAll("[data-del-id]").forEach(b => b.addEventListener("click", async () => {
+        if (!confirm("Delete this user account?")) return;
+        try {
+          await api(`/api/users/${b.dataset.delId}`, { method: "DELETE" });
+          toast("User deleted.", "success");
+          refreshUserList();
+        } catch (err) { toast(err.message || "Could not delete user.", "error"); }
+      }));
+      listBox.querySelectorAll("[data-reset-id]").forEach(b => b.addEventListener("click", async () => {
+        const newPassword = prompt(`New password for ${b.dataset.resetName} (min 6 characters):`);
+        if (!newPassword) return;
+        if (newPassword.length < 6) { alert("Password must be at least 6 characters."); return; }
+        try {
+          await api(`/api/users/${b.dataset.resetId}/reset-password`, { method: "POST", body: { new_password: newPassword } });
+          toast(`Password reset for ${b.dataset.resetName}. They're logged out everywhere.`, "success");
+        } catch (err) { toast(err.message || "Could not reset password.", "error"); }
+      }));
+    } catch (err) {
+      listBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not load users.")}</div>`;
+    }
+  }
+
+  overlay.querySelector("#mu-create-btn").addEventListener("click", async () => {
+    const errBox = overlay.querySelector("#mu-create-error");
+    errBox.innerHTML = "";
+    const username = overlay.querySelector("#mu-username").value.trim();
+    const email = overlay.querySelector("#mu-email").value.trim();
+    const password = overlay.querySelector("#mu-password").value;
+    const role = overlay.querySelector("#mu-role").value;
+    try {
+      const data = await api("/api/users", { method: "POST", body: { username, email, password, role } });
+      toast(`Created ${data.username} (${data.role}).`, "success");
+      overlay.querySelector("#mu-username").value = "";
+      overlay.querySelector("#mu-email").value = "";
+      overlay.querySelector("#mu-password").value = "";
+      refreshUserList();
+    } catch (err) {
+      errBox.innerHTML = `<div class="form-error-banner">${escapeHtml(err.message || "Could not create user.")}</div>`;
+    }
+  });
+
+  refreshUserList();
+}
+
+/* ==========================================================================
+   INIT
+   ========================================================================== */
+(async function init() {
+  if (state.token) {
+    try {
+      const me = await api("/api/me");
+      state.user = { username: me.username, role: me.role };
+      await bootApp();
+      return;
+    } catch (e) {
+      // token invalid/expired — fall through to login
+    }
+  }
+  renderLogin();
+})();
+</script>
+</body>
+</html>

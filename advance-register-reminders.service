@@ -1,0 +1,21 @@
+# One-shot service that sends the day's reminder emails, triggered by the
+# companion .timer file. Install both:
+#   sudo cp deploy/advance-register-reminders.service /etc/systemd/system/
+#   sudo cp deploy/advance-register-reminders.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now advance-register-reminders.timer
+#
+# Run once by hand to test:
+#   sudo systemctl start advance-register-reminders.service
+#   sudo journalctl -u advance-register-reminders -f
+
+[Unit]
+Description=Advance Register - send overdue reminder emails
+
+[Service]
+Type=oneshot
+User=advanceapp
+Group=advanceapp
+WorkingDirectory=/opt/advance-register
+EnvironmentFile=/opt/advance-register/.env
+ExecStart=/opt/advance-register/venv/bin/python send_reminders.py

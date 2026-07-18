@@ -1,0 +1,36 @@
+# systemd unit for the Advance Register backend.
+#
+# Install:
+#   sudo cp deploy/advance-register.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now advance-register
+#
+# Logs:
+#   sudo journalctl -u advance-register -f
+#
+# Edit the paths/user below to match your server before installing.
+
+[Unit]
+Description=Advance Register (gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=advanceapp
+Group=advanceapp
+WorkingDirectory=/opt/advance-register
+EnvironmentFile=/opt/advance-register/.env
+ExecStart=/opt/advance-register/venv/bin/gunicorn -c gunicorn.conf.py wsgi:app
+Restart=on-failure
+RestartSec=5
+
+# Basic sandboxing -- the service can't write outside its own directory,
+# can't gain new privileges, and can't see other users' processes.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/advance-register
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

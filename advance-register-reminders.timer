@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Advance Register reminder job daily
+
+[Timer]
+# 08:30 server-local time each day. Adjust to your institution's working
+# hours -- there's no reason to email people at 3am.
+OnCalendar=*-*-* 08:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
